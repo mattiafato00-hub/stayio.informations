@@ -526,7 +526,7 @@ footer .wordmark { color: #fff; }
   margin: 0;
 }
 
-:is(.restaurant, .other) .r-form {
+:is(.restaurant, .host, .other) .r-form {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 18px;
@@ -677,7 +677,7 @@ footer .wordmark { color: #fff; }
   :is(.restaurant, .host, .other) .r-form-section {
     padding: 44px 24px 70px;
   }
-  :is(.restaurant, .other) .r-form {
+  :is(.restaurant, .host, .other) .r-form {
     grid-template-columns: 1fr;
   }
 }
@@ -878,6 +878,7 @@ footer .wordmark { color: #fff; }
   font-family: var(--font-manrope), "Manrope", sans-serif;
   font-size: 14px;
   font-weight: 800;
+  white-space: nowrap;
   transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
 
@@ -905,6 +906,120 @@ footer .wordmark { color: #fff; }
   border-radius: 6px;
 }
 
+/* Short signup form — helper line under the intro */
+.host .h-form-note {
+  margin: 0 0 20px;
+  text-align: center;
+  font-family: var(--font-inter), "Inter", sans-serif;
+  font-size: 13px;
+  color: #c9a9ac;
+}
+
+/* Confirmation — stacked call-to-action buttons + "come back later" note */
+.host .h-success-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.host .h-success-actions .h-wa {
+  margin-top: 0;
+}
+
+.host .h-edit-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 24px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #ffffff;
+  font-family: var(--font-manrope), "Manrope", sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  white-space: nowrap;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+
+.host .h-edit-cta svg {
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+}
+
+.host .h-edit-cta:hover {
+  transform: translateY(-2px);
+  background: #e11d3f;
+  box-shadow: 0 14px 30px rgba(200, 29, 58, 0.4);
+}
+
+.host .h-success-later {
+  margin: 20px auto 0;
+  max-width: 44ch;
+  font-family: var(--font-inter), "Inter", sans-serif;
+  font-size: 14px;
+  line-height: 1.55;
+  color: #e8c7c9;
+}
+
+.host .h-success-link {
+  margin-top: 14px;
+  font-family: var(--font-inter), "Inter", sans-serif;
+  font-size: 12px;
+  color: #c9a9ac;
+  word-break: break-all;
+}
+
+.host .h-success-link code {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 2px 7px;
+  border-radius: 6px;
+}
+
+/* Self-service edit page (app/il-mio-concierge/[token]) */
+.host .h-edit-head {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px 40px 8px;
+  text-align: center;
+}
+
+.host .h-edit-head h1 {
+  font-family: var(--font-manrope), "Manrope", sans-serif;
+  font-size: clamp(26px, 3.4vw, 38px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  margin: 0 0 10px;
+}
+
+.host .h-edit-head p {
+  font-family: var(--font-inter), "Inter", sans-serif;
+  font-size: 15px;
+  color: #e8c7c9;
+  margin: 0;
+}
+
+.host .h-edit-saved {
+  position: sticky;
+  bottom: 16px;
+  margin: 18px auto 0;
+  max-width: 320px;
+  text-align: center;
+  padding: 12px 18px;
+  border-radius: 999px;
+  background: #1c7d3f;
+  color: #ffffff;
+  font-family: var(--font-inter), "Inter", sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+}
+
 @media (max-width: 900px) {
   .host .h-steps {
     grid-template-columns: 1fr;
@@ -912,6 +1027,9 @@ footer .wordmark { color: #fff; }
   }
   .host .h-grid {
     grid-template-columns: 1fr;
+  }
+  .host .h-edit-head {
+    padding: 20px 24px 4px;
   }
 }
 
