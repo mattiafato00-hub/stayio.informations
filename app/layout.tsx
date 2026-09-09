@@ -13,8 +13,27 @@ const manrope = Manrope({
 });
 
 export const metadata: Metadata = {
-  title: "Stayio — Local discovery, made tangible",
-  description: "A better way for guests to discover the places worth knowing.",
+  metadataBase: new URL("https://stayioinformations.com"),
+  title: "Stayio — Nuovi clienti per il tuo ristorante, proprio quando sono pronti a scegliere",
+  description:
+    "Stayio collega B&B, ristoranti e attività locali: più clienti per te, un servizio in più per chi ospita.",
+  openGraph: {
+    title: "Stayio — Nuovi clienti per il tuo ristorante, proprio quando sono pronti a scegliere",
+    description:
+      "Stayio collega B&B, ristoranti e attività locali: più clienti per te, un servizio in più per chi ospita.",
+    images: ["/stayio-logo.png"],
+    url: "https://stayioinformations.com",
+    siteName: "Stayio",
+    locale: "it_IT",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Stayio — Nuovi clienti per il tuo ristorante, proprio quando sono pronti a scegliere",
+    description:
+      "Stayio collega B&B, ristoranti e attività locali: più clienti per te, un servizio in più per chi ospita.",
+    images: ["/stayio-logo.png"],
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
