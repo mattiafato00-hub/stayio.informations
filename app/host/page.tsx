@@ -47,70 +47,24 @@ const steps = [
   ["Gli ospiti fanno da sé", "Meno messaggi per te, più autonomia per loro — dal primo giorno."],
 ];
 
-type FaqRow = { question: string; answer: string };
 type Status = "idle" | "sending" | "sent" | "error";
 
-const iconStructure = (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-5h6v5M9 10h.01M15 10h.01M9 13h.01M15 13h.01" />
-  </svg>
-);
-const iconWifi = (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <path d="M5 12.55a11 11 0 0 1 14 0M1.5 8.5a16 16 0 0 1 21 0M8.5 16.4a6 6 0 0 1 7 0M12 20h.01" />
-  </svg>
-);
-const iconKey = (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <path d="M15 7a4 4 0 1 1-4.9 3.9L4 17v3h3l1-1h2l1-1v-2l1.1-1.1A4 4 0 0 1 15 7Z" />
-    <path d="M16.5 7.5h.01" />
-  </svg>
-);
-const iconHouse = (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <path d="M3 10.5 12 3l9 7.5M5 9.5V21h14V9.5" />
-  </svg>
-);
-const iconPhone = (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2Z" />
-  </svg>
-);
-const iconNote = (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <path d="M4 4h16v12l-4 4H4V4Z" />
-    <path d="M14 20v-4h4M8 9h8M8 13h5" />
-  </svg>
-);
-const iconFaq = (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <circle cx="12" cy="12" r="9" />
-    <path d="M9.5 9.5a2.5 2.5 0 0 1 4.8.9c0 1.7-2.3 2.1-2.3 3.6M12 17h.01" />
-  </svg>
-);
 const iconWhatsapp = (
   <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
     <path d="M12 2a10 10 0 0 0-8.6 15l-1.3 4.8 5-1.3A10 10 0 1 0 12 2Zm5.8 14.2c-.2.7-1.4 1.3-2 1.4-.5.1-1.2.1-1.9-.1-.4-.1-1-.3-1.7-.6-3-1.3-4.9-4.3-5.1-4.5-.1-.2-1.2-1.5-1.2-2.9 0-1.4.7-2 1-2.3.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.3.5-.4.4c-.1.1-.3.3-.1.6.1.3.7 1.1 1.5 1.8 1 .9 1.8 1.1 2.1 1.3.3.1.5.1.6-.1l.7-.9c.2-.2.4-.2.6-.1l1.9.9c.2.1.4.2.4.3.1.2.1.8-.1 1.4Z" />
   </svg>
 );
+const iconEdit = (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M12 20h9" />
+    <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5Z" />
+  </svg>
+);
 
 export default function HostPage() {
-  const [faqs, setFaqs] = useState<FaqRow[]>([{ question: "", answer: "" }]);
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
   const [result, setResult] = useState<{ editToken?: string; suggestedSlug?: string } | null>(null);
-
-  function addFaq() {
-    setFaqs((rows) => [...rows, { question: "", answer: "" }]);
-  }
-
-  function removeFaq(index: number) {
-    setFaqs((rows) => (rows.length === 1 ? [{ question: "", answer: "" }] : rows.filter((_, i) => i !== index)));
-  }
-
-  function updateFaq(index: number, key: keyof FaqRow, value: string) {
-    setFaqs((rows) => rows.map((row, i) => (i === index ? { ...row, [key]: value } : row)));
-  }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -118,24 +72,13 @@ export default function HostPage() {
     setError("");
 
     const data = new FormData(event.currentTarget);
+    const phone = data.get("phone");
     const payload = {
       name: data.get("name"),
       email: data.get("email"),
-      address: data.get("address"),
-      wifi_ssid: data.get("wifi_ssid"),
-      wifi_password: data.get("wifi_password"),
-      checkin_info: data.get("checkin_info"),
-      checkout_info: data.get("checkout_info"),
-      access_instructions: data.get("access_instructions"),
-      house_rules: data.get("house_rules"),
-      parking_info: data.get("parking_info"),
-      luggage_info: data.get("luggage_info"),
-      appliances_info: data.get("appliances_info"),
-      climate_info: data.get("climate_info"),
-      host_phone: data.get("host_phone"),
-      host_whatsapp: data.get("host_whatsapp"),
-      custom_instructions: data.get("custom_instructions"),
-      faqs: faqs.filter((f) => f.question.trim() && f.answer.trim()),
+      // un solo campo di contatto: lo salviamo sia come telefono che come WhatsApp
+      host_phone: phone,
+      host_whatsapp: phone,
     };
 
     try {
@@ -161,9 +104,12 @@ export default function HostPage() {
     }
   }
 
-  const conciergeUrl = result?.suggestedSlug ? `https://stayio.app/${result.suggestedSlug}` : "https://stayio.app";
+  const editPath = result?.editToken ? `/il-mio-concierge/${result.editToken}` : null;
+  const editUrl = editPath ? `https://stayio.app${editPath}` : null;
   const whatsappHref = `https://wa.me/?text=${encodeURIComponent(
-    `Il concierge digitale della mia struttura su Stayio 👉 ${conciergeUrl}`,
+    editUrl
+      ? `Il mio concierge digitale Stayio. Link personale per aggiungere e modificare le info: ${editUrl}`
+      : "Il mio concierge digitale Stayio.",
   )}`;
 
   return (
@@ -222,173 +168,67 @@ export default function HostPage() {
       <section className="r-form-section" id="registra">
         <div className="r-form-intro">
           <p className="eyebrow">
-            <span className="dot" /> Gratis · meno di 5 minuti
+            <span className="dot" /> Gratis · 30 secondi
           </p>
-          <h2>Crea il tuo concierge</h2>
-          <p>Compila solo quello che vuoi mostrare ai tuoi ospiti. Potrai modificare tutto quando vuoi.</p>
+          <h2>Attiva il tuo concierge</h2>
+          <p>Ci servono solo tre cose per crearlo. I dettagli li aggiungi dopo, con calma.</p>
         </div>
 
         {status === "sent" ? (
           <div className="r-success" role="status">
             <span className="r-success-mark" aria-hidden="true">✓</span>
-            <h3>Grazie! Ti ricontatteremo presto.</h3>
-            <p>Il tuo concierge digitale è stato creato. Ti scriviamo per gli ultimi dettagli e per portartelo pronto all&apos;uso nella tua struttura.</p>
-            <a className="h-wa" href={whatsappHref} target="_blank" rel="noopener noreferrer">
-              {iconWhatsapp} Salva il link su WhatsApp
-            </a>
+            <h3>Il tuo concierge è già attivo.</h3>
+            <p>
+              Quando hai qualche minuto, torna sul tuo link personale per aggiungere Wi-Fi, regole
+              della casa e tutte le altre informazioni utili ai tuoi ospiti.
+            </p>
+
+            <div className="h-success-actions">
+              {editPath && (
+                <a className="h-edit-cta" href={editPath}>
+                  {iconEdit} Aggiungi i dettagli ora
+                </a>
+              )}
+              <a className="h-wa" href={whatsappHref} target="_blank" rel="noopener noreferrer">
+                {iconWhatsapp} Salva il link su WhatsApp
+              </a>
+            </div>
+
+            {editUrl && (
+              <p className="h-success-link">
+                Il tuo link personale (salvalo): <code>{editUrl}</code>
+              </p>
+            )}
             {result?.suggestedSlug && (
               <p className="h-success-slug">
-                Indirizzo suggerito: <code>stayio.app/{result.suggestedSlug}</code>
+                Indirizzo del concierge: <code>stayio.app/{result.suggestedSlug}</code>
               </p>
             )}
           </div>
         ) : (
-          <form className="h-form" onSubmit={handleSubmit}>
-            <fieldset className="h-fieldset">
-              <legend className="h-legend">{iconStructure} La struttura</legend>
-              <div className="h-grid">
-                <div className="r-field">
-                  <label htmlFor="name">Nome della struttura *</label>
-                  <input id="name" name="name" type="text" required autoComplete="organization" />
-                </div>
-                <div className="r-field">
-                  <label htmlFor="address">Indirizzo</label>
-                  <input id="address" name="address" type="text" autoComplete="street-address" />
-                </div>
+          <>
+            <p className="h-form-note">Bastano 30 secondi — potrai aggiungere tutti i dettagli quando vuoi.</p>
+            <form className="r-form" onSubmit={handleSubmit}>
+              <div className="r-field r-field-full">
+                <label htmlFor="name">Nome dell&apos;alloggio *</label>
+                <input id="name" name="name" type="text" required autoComplete="organization" />
               </div>
-            </fieldset>
-
-            <fieldset className="h-fieldset">
-              <legend className="h-legend">{iconWifi} Wi-Fi</legend>
-              <div className="h-grid">
-                <div className="r-field">
-                  <label htmlFor="wifi_ssid">Nome rete (SSID)</label>
-                  <input id="wifi_ssid" name="wifi_ssid" type="text" />
-                </div>
-                <div className="r-field">
-                  <label htmlFor="wifi_password">Password</label>
-                  <input id="wifi_password" name="wifi_password" type="text" />
-                </div>
+              <div className="r-field">
+                <label htmlFor="email">Email *</label>
+                <input id="email" name="email" type="email" required autoComplete="email" />
               </div>
-            </fieldset>
-
-            <fieldset className="h-fieldset">
-              <legend className="h-legend">{iconKey} Arrivo e partenza</legend>
-              <div className="h-grid">
-                <div className="r-field">
-                  <label htmlFor="checkin_info">Check-in</label>
-                  <textarea id="checkin_info" name="checkin_info" rows={2} placeholder="Es. dalle 15:00, chiama al citofono 'Rossi'" />
-                </div>
-                <div className="r-field">
-                  <label htmlFor="checkout_info">Check-out</label>
-                  <textarea id="checkout_info" name="checkout_info" rows={2} placeholder="Es. entro le 10:00, lascia le chiavi sul tavolo" />
-                </div>
-                <div className="r-field r-field-full">
-                  <label htmlFor="access_instructions">Come si accede</label>
-                  <textarea id="access_instructions" name="access_instructions" rows={2} placeholder="Portone, scale, ascensore, codice della cassetta..." />
-                </div>
+              <div className="r-field">
+                <label htmlFor="phone">Telefono / WhatsApp *</label>
+                <input id="phone" name="phone" type="tel" required autoComplete="tel" />
               </div>
-            </fieldset>
 
-            <fieldset className="h-fieldset">
-              <legend className="h-legend">{iconHouse} La casa</legend>
-              <div className="h-grid">
-                <div className="r-field r-field-full">
-                  <label htmlFor="house_rules">Regole della casa</label>
-                  <textarea id="house_rules" name="house_rules" rows={2} />
-                </div>
-                <div className="r-field">
-                  <label htmlFor="parking_info">Parcheggio</label>
-                  <textarea id="parking_info" name="parking_info" rows={2} />
-                </div>
-                <div className="r-field">
-                  <label htmlFor="luggage_info">Deposito bagagli</label>
-                  <textarea id="luggage_info" name="luggage_info" rows={2} />
-                </div>
-                <div className="r-field">
-                  <label htmlFor="appliances_info">Elettrodomestici</label>
-                  <textarea id="appliances_info" name="appliances_info" rows={2} placeholder="Lavatrice, forno, macchina del caffè..." />
-                </div>
-                <div className="r-field">
-                  <label htmlFor="climate_info">Riscaldamento / aria condizionata</label>
-                  <textarea id="climate_info" name="climate_info" rows={2} />
-                </div>
-              </div>
-            </fieldset>
+              {status === "error" && <p className="r-form-error">{error}</p>}
 
-            <fieldset className="h-fieldset">
-              <legend className="h-legend">{iconPhone} Contatti</legend>
-              <p className="h-hint">Li usiamo solo noi per contattarti: non vengono mostrati agli ospiti.</p>
-              <div className="h-grid">
-                <div className="r-field r-field-full">
-                  <label htmlFor="email">Email *</label>
-                  <input id="email" name="email" type="email" required autoComplete="email" />
-                </div>
-                <div className="r-field">
-                  <label htmlFor="host_phone">Telefono</label>
-                  <input id="host_phone" name="host_phone" type="tel" autoComplete="tel" />
-                </div>
-                <div className="r-field">
-                  <label htmlFor="host_whatsapp">WhatsApp</label>
-                  <input id="host_whatsapp" name="host_whatsapp" type="tel" />
-                </div>
-              </div>
-            </fieldset>
-
-            <fieldset className="h-fieldset">
-              <legend className="h-legend">{iconNote} Note aggiuntive</legend>
-              <div className="h-grid">
-                <div className="r-field r-field-full">
-                  <label htmlFor="custom_instructions">Qualsiasi altra cosa utile ai tuoi ospiti</label>
-                  <textarea id="custom_instructions" name="custom_instructions" rows={3} />
-                </div>
-              </div>
-            </fieldset>
-
-            <fieldset className="h-fieldset">
-              <legend className="h-legend">{iconFaq} Domande frequenti</legend>
-              <p className="h-hint">Le domande che ti fanno più spesso, con la risposta pronta. Aggiungine quante vuoi.</p>
-              {faqs.map((faq, index) => (
-                <div className="h-faq-row" key={index}>
-                  <div className="h-faq-top">
-                    <span>Domanda {index + 1}</span>
-                    <button type="button" className="h-faq-remove" onClick={() => removeFaq(index)}>
-                      Rimuovi
-                    </button>
-                  </div>
-                  <div className="r-field">
-                    <label htmlFor={`faq-q-${index}`}>Domanda</label>
-                    <input
-                      id={`faq-q-${index}`}
-                      type="text"
-                      value={faq.question}
-                      onChange={(e) => updateFaq(index, "question", e.target.value)}
-                      placeholder="Es. C'è il phon in bagno?"
-                    />
-                  </div>
-                  <div className="r-field">
-                    <label htmlFor={`faq-a-${index}`}>Risposta</label>
-                    <textarea
-                      id={`faq-a-${index}`}
-                      rows={2}
-                      value={faq.answer}
-                      onChange={(e) => updateFaq(index, "answer", e.target.value)}
-                      placeholder="Es. Sì, nel primo cassetto sotto il lavandino."
-                    />
-                  </div>
-                </div>
-              ))}
-              <button type="button" className="h-faq-add" onClick={addFaq}>
-                + Aggiungi domanda
+              <button type="submit" className="r-submit" disabled={status === "sending"}>
+                {status === "sending" ? "Attivazione in corso…" : "Attiva il concierge gratuito"}
               </button>
-            </fieldset>
-
-            {status === "error" && <p className="r-form-error">{error}</p>}
-
-            <button type="submit" className="r-submit" disabled={status === "sending"}>
-              {status === "sending" ? "Creazione in corso…" : "Attiva il concierge gratuito"}
-            </button>
-          </form>
+            </form>
+          </>
         )}
       </section>
 
