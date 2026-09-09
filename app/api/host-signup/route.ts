@@ -1,5 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
-import { NextRequest, NextResponse } from "next/server";
+import { after, NextRequest, NextResponse } from "next/server";
+
+import { sendHostNotification } from "@/lib/host-notify";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
@@ -109,6 +111,19 @@ export async function POST(request: NextRequest) {
     }
 
     console.log(`Nuovo host B&B registrato: ${name} <${email}> — property_id: ${property.id}`);
+
+    // Notifica email a Stayio, eseguita dopo la risposta (after): non aggiunge
+    // latenza e un eventuale errore non tocca la risposta di successo.
+    after(() =>
+      sendHostNotification({
+        kind: "signup",
+        propertyId: property.id,
+        name: name.trim(),
+        email: email.trim(),
+        phone: typeof host_phone === "string" ? host_phone : null,
+        whatsapp: typeof host_whatsapp === "string" ? host_whatsapp : null,
+      }),
+    );
 
     // Se sono state fornite FAQ iniziali, le inseriamo collegate alla nuova property
     if (Array.isArray(faqs) && faqs.length > 0) {

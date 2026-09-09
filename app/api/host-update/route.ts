@@ -1,5 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
-import { NextRequest, NextResponse } from "next/server";
+import { after, NextRequest, NextResponse } from "next/server";
+
+import { sendHostNotification } from "@/lib/host-notify";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
@@ -45,7 +47,7 @@ export async function POST(request: NextRequest) {
     // Verifica che il link corrisponda a una property esistente.
     const { data: property, error: lookupError } = await supabase
       .from("property_details")
-      .select("id")
+      .select("id, name, host_email, host_phone, host_whatsapp")
       .eq("edit_token", token)
       .maybeSingle();
 
@@ -111,6 +113,19 @@ export async function POST(request: NextRequest) {
         }
       }
     }
+
+    // Notifica email a Stayio, eseguita dopo la risposta (after): non aggiunge
+    // latenza e un eventuale errore non tocca la risposta di successo.
+    after(() =>
+      sendHostNotification({
+        kind: "update",
+        propertyId: property.id,
+        name: "name" in updates ? updates.name : property.name,
+        email: property.host_email,
+        phone: "host_phone" in updates ? updates.host_phone : property.host_phone,
+        whatsapp: "host_whatsapp" in updates ? updates.host_whatsapp : property.host_whatsapp,
+      }),
+    );
 
     return NextResponse.json({ success: true });
   } catch (err) {
