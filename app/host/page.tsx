@@ -65,6 +65,13 @@ export default function HostPage() {
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
   const [result, setResult] = useState<{ editToken?: string; suggestedSlug?: string } | null>(null);
+  // Base URL del concierge: in produzione si può forzare con NEXT_PUBLIC_SITE_URL,
+  // altrimenti si usa l'origin corrente (localhost in locale, dominio reale in prod).
+  const [siteUrl] = useState(() => {
+    const configured = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
+    if (configured) return configured;
+    return typeof window !== "undefined" ? window.location.origin : "";
+  });
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -105,7 +112,8 @@ export default function HostPage() {
   }
 
   const editPath = result?.editToken ? `/il-mio-concierge/${result.editToken}` : null;
-  const editUrl = editPath ? `https://stayio.app${editPath}` : null;
+  const editUrl = editPath && siteUrl ? `${siteUrl}${editPath}` : null;
+  const siteHost = siteUrl.replace(/^https?:\/\//, "");
   const whatsappHref = `https://wa.me/?text=${encodeURIComponent(
     editUrl
       ? `Il mio concierge digitale Stayio. Link personale per aggiungere e modificare le info: ${editUrl}`
@@ -201,7 +209,7 @@ export default function HostPage() {
             )}
             {result?.suggestedSlug && (
               <p className="h-success-slug">
-                Indirizzo del concierge: <code>stayio.app/{result.suggestedSlug}</code>
+                Indirizzo del concierge: <code>{siteHost ? `${siteHost}/` : ""}{result.suggestedSlug}</code>
               </p>
             )}
           </div>
