@@ -19,6 +19,7 @@ const EDITABLE_FIELDS = [
   "access_instructions",
   "house_rules",
   "parking_info",
+  "waste_info",
   "luggage_info",
   "appliances_info",
   "climate_info",

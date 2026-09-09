@@ -13,6 +13,7 @@ export type ConciergeProperty = {
   access_instructions: string | null;
   house_rules: string | null;
   parking_info: string | null;
+  waste_info: string | null;
   luggage_info: string | null;
   appliances_info: string | null;
   climate_info: string | null;
@@ -64,6 +65,16 @@ const iconFaq = (
     <path d="M9.5 9.5a2.5 2.5 0 0 1 4.8.9c0 1.7-2.3 2.1-2.3 3.6M12 17h.01" />
   </svg>
 );
+const iconCar = (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M5 13l1.5-4.5A2 2 0 0 1 8.4 7h7.2a2 2 0 0 1 1.9 1.5L19 13m-14 0h14m-14 0v4m14-4v4M7 17h.01M17 17h.01M5 17h14v.5a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 5 17.5V17Z" />
+  </svg>
+);
+const iconTrash = (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M6 7l1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13M10 11v6M14 11v6" />
+  </svg>
+);
 
 export default function EditConciergeForm({
   token,
@@ -99,7 +110,6 @@ export default function EditConciergeForm({
     const payload = {
       token,
       name: data.get("name"),
-      address: data.get("address"),
       wifi_ssid: data.get("wifi_ssid"),
       wifi_password: data.get("wifi_password"),
       checkin_info: data.get("checkin_info"),
@@ -107,6 +117,7 @@ export default function EditConciergeForm({
       access_instructions: data.get("access_instructions"),
       house_rules: data.get("house_rules"),
       parking_info: data.get("parking_info"),
+      waste_info: data.get("waste_info"),
       luggage_info: data.get("luggage_info"),
       appliances_info: data.get("appliances_info"),
       climate_info: data.get("climate_info"),
@@ -143,13 +154,9 @@ export default function EditConciergeForm({
       <fieldset className="h-fieldset">
         <legend className="h-legend">{iconStructure} La struttura</legend>
         <div className="h-grid">
-          <div className="r-field">
+          <div className="r-field r-field-full">
             <label htmlFor="name">Nome dell&apos;alloggio *</label>
             <input id="name" name="name" type="text" required defaultValue={property.name ?? ""} autoComplete="organization" />
-          </div>
-          <div className="r-field">
-            <label htmlFor="address">Indirizzo</label>
-            <input id="address" name="address" type="text" defaultValue={property.address ?? ""} autoComplete="street-address" />
           </div>
         </div>
       </fieldset>
@@ -170,14 +177,18 @@ export default function EditConciergeForm({
 
       <fieldset className="h-fieldset">
         <legend className="h-legend">{iconKey} Arrivo e partenza</legend>
+        <p className="h-hint">
+          Gli orari di check-in e check-out li mostriamo già noi: qui scrivi solo la <strong>procedura</strong> —
+          a chi citofonare, dove sono le chiavi, cosa fare prima di uscire.
+        </p>
         <div className="h-grid">
           <div className="r-field">
-            <label htmlFor="checkin_info">Check-in</label>
-            <textarea id="checkin_info" name="checkin_info" rows={2} defaultValue={property.checkin_info ?? ""} placeholder="Es. dalle 15:00, chiama al citofono 'Rossi'" />
+            <label htmlFor="checkin_info">Come fare il check-in</label>
+            <textarea id="checkin_info" name="checkin_info" rows={2} defaultValue={property.checkin_info ?? ""} placeholder="Es. citofona a 'Rossi', 2º piano. Le chiavi sono nella cassetta accanto al portone, codice 4471." />
           </div>
           <div className="r-field">
-            <label htmlFor="checkout_info">Check-out</label>
-            <textarea id="checkout_info" name="checkout_info" rows={2} defaultValue={property.checkout_info ?? ""} placeholder="Es. entro le 10:00, lascia le chiavi sul tavolo" />
+            <label htmlFor="checkout_info">Cosa fare prima di uscire</label>
+            <textarea id="checkout_info" name="checkout_info" rows={2} defaultValue={property.checkout_info ?? ""} placeholder="Es. lascia le chiavi sul tavolo, spegni il climatizzatore, chiudi bene la porta-finestra." />
           </div>
           <div className="r-field r-field-full">
             <label htmlFor="access_instructions">Come si accede</label>
@@ -188,26 +199,47 @@ export default function EditConciergeForm({
 
       <fieldset className="h-fieldset">
         <legend className="h-legend">{iconHouse} La casa</legend>
+        <p className="h-hint">
+          Non le regole generiche (quelle le diamo per scontate): le <strong>particolarità</strong> che solo tu conosci.
+        </p>
         <div className="h-grid">
           <div className="r-field r-field-full">
-            <label htmlFor="house_rules">Regole della casa</label>
-            <textarea id="house_rules" name="house_rules" rows={2} defaultValue={property.house_rules ?? ""} />
-          </div>
-          <div className="r-field">
-            <label htmlFor="parking_info">Parcheggio</label>
-            <textarea id="parking_info" name="parking_info" rows={2} defaultValue={property.parking_info ?? ""} />
+            <label htmlFor="house_rules">Particolarità e regole della casa</label>
+            <textarea id="house_rules" name="house_rules" rows={2} defaultValue={property.house_rules ?? ""} placeholder="Es. la porta-finestra va sempre chiusa a chiave, niente lavatrice dopo le 22 per i vicini, il balcone del 3º piano non si usa." />
           </div>
           <div className="r-field">
             <label htmlFor="luggage_info">Deposito bagagli</label>
-            <textarea id="luggage_info" name="luggage_info" rows={2} defaultValue={property.luggage_info ?? ""} />
+            <textarea id="luggage_info" name="luggage_info" rows={2} defaultValue={property.luggage_info ?? ""} placeholder="Es. puoi lasciare le valigie in ingresso prima del check-in o dopo il check-out, avvisami e ti apro." />
           </div>
           <div className="r-field">
             <label htmlFor="appliances_info">Elettrodomestici</label>
-            <textarea id="appliances_info" name="appliances_info" rows={2} defaultValue={property.appliances_info ?? ""} placeholder="Lavatrice, forno, macchina del caffè..." />
+            <textarea id="appliances_info" name="appliances_info" rows={2} defaultValue={property.appliances_info ?? ""} placeholder="Solo quelli con qualche particolarità: es. la lavatrice parte solo col rubinetto aperto sotto il lavello." />
           </div>
           <div className="r-field">
             <label htmlFor="climate_info">Riscaldamento / aria condizionata</label>
-            <textarea id="climate_info" name="climate_info" rows={2} defaultValue={property.climate_info ?? ""} />
+            <textarea id="climate_info" name="climate_info" rows={2} defaultValue={property.climate_info ?? ""} placeholder="Es. telecomando nel primo cassetto, tasto in alto per accendere; il termostato in corridoio si gira in senso orario." />
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset className="h-fieldset">
+        <legend className="h-legend">{iconCar} Parcheggio</legend>
+        <p className="h-hint">Il consiglio pratico che daresti tu di persona, non solo &laquo;c&apos;è un parcheggio&raquo;.</p>
+        <div className="h-grid">
+          <div className="r-field r-field-full">
+            <label htmlFor="parking_info">Dove parcheggiare l&apos;auto</label>
+            <textarea id="parking_info" name="parking_info" rows={2} defaultValue={property.parking_info ?? ""} placeholder="Es. strisce blu gratuite dopo le 20 e la domenica; il posto sotto casa in Via Roma 4 è quasi sempre libero; il garage in cortile ha il telecomando appeso all&apos;ingresso." />
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset className="h-fieldset">
+        <legend className="h-legend">{iconTrash} Spazzatura e raccolta differenziata</legend>
+        <p className="h-hint">Com&apos;è organizzata dalle tue parti: cambia da via a via, l&apos;ospite non può saperlo.</p>
+        <div className="h-grid">
+          <div className="r-field r-field-full">
+            <label htmlFor="waste_info">Come e dove si buttano i rifiuti</label>
+            <textarea id="waste_info" name="waste_info" rows={2} defaultValue={property.waste_info ?? ""} placeholder="Es. i bidoni sono in cortile; umido lunedì e giovedì, plastica il mercoledì, sacchetti sotto il lavello; il vetro nella campana all&apos;angolo." />
           </div>
         </div>
       </fieldset>
