@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     title: "Stayio — Nuovi clienti per il tuo ristorante, proprio quando sono pronti a scegliere",
     description:
       "Stayio collega B&B, ristoranti e attività locali: più clienti per te, un servizio in più per chi ospita.",
-    images: ["/stayio-logo.png"],
+    images: ["/og-image.png"],
     url: "https://stayioinformations.com",
     siteName: "Stayio",
     locale: "it_IT",
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     title: "Stayio — Nuovi clienti per il tuo ristorante, proprio quando sono pronti a scegliere",
     description:
       "Stayio collega B&B, ristoranti e attività locali: più clienti per te, un servizio in più per chi ospita.",
-    images: ["/stayio-logo.png"],
+    images: ["/og-image.png"],
   },
 };
 
