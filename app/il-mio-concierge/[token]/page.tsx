@@ -19,7 +19,7 @@ async function loadProperty(token: string): Promise<{ property: ConciergePropert
   const { data: property, error } = await supabase
     .from("property_details")
     .select(
-      "id, name, address, wifi_ssid, wifi_password, checkin_info, checkout_info, access_instructions, house_rules, parking_info, luggage_info, appliances_info, climate_info, host_phone, host_whatsapp, custom_instructions, suggested_slug",
+      "id, name, address, wifi_ssid, wifi_password, checkin_info, checkout_info, access_instructions, house_rules, parking_info, waste_info, luggage_info, appliances_info, climate_info, host_phone, host_whatsapp, custom_instructions, suggested_slug",
     )
     .eq("edit_token", token)
     .maybeSingle();
