@@ -800,6 +800,85 @@ footer .wordmark { color: #fff; }
   margin: 0 0 16px;
 }
 
+/* Sezioni collassabili (accordion) — alleggeriscono la prima impressione
+   del form di modifica. I campi restano montati anche da chiusi (nascosti
+   con [hidden]), così il salvataggio via FormData continua a inviarli. */
+.host .h-acc {
+  padding: 0;
+  overflow: hidden;
+}
+
+.host .h-acc-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 18px 22px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--font-manrope), "Manrope", sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: #ffffff;
+  transition: background 0.15s ease;
+}
+
+.host .h-acc-header:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.host .h-acc-header:focus-visible {
+  outline: 2px solid var(--accent-bright);
+  outline-offset: -2px;
+}
+
+.host .h-acc-ico {
+  display: flex;
+  flex-shrink: 0;
+  color: var(--accent-bright);
+}
+
+.host .h-acc-ico svg {
+  width: 18px;
+  height: 18px;
+}
+
+.host .h-acc-title {
+  flex: 1;
+  min-width: 0;
+}
+
+.host .h-acc-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: #3ecf8e;
+  flex-shrink: 0;
+}
+
+.host .h-acc-chevron {
+  display: flex;
+  flex-shrink: 0;
+  color: rgba(255, 255, 255, 0.45);
+  transition: transform 0.18s ease;
+}
+
+.host .h-acc-chevron svg {
+  width: 18px;
+  height: 18px;
+}
+
+.host .h-acc.is-open .h-acc-chevron {
+  transform: rotate(180deg);
+}
+
+.host .h-acc-body {
+  padding: 2px 22px 24px;
+}
+
 /* FAQ repeater */
 .host .h-faq-row {
   display: grid;
