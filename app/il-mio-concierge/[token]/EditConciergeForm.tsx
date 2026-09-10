@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, ReactNode, useId, useState } from "react";
 
 export type ConciergeProperty = {
   id: string;
@@ -75,6 +75,62 @@ const iconTrash = (
     <path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M6 7l1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13M10 11v6M14 11v6" />
   </svg>
 );
+const iconChevron = (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="m6 9 6 6 6-6" />
+  </svg>
+);
+
+const hasValue = (v: string | null | undefined) => typeof v === "string" && v.trim().length > 0;
+
+/**
+ * Sezione collassabile del form di modifica. I campi restano SEMPRE
+ * montati nel DOM (anche da chiusi): vengono solo nascosti via `hidden`,
+ * così `new FormData(form)` continua a inviarli al salvataggio.
+ *
+ * `filled` = la sezione ha già almeno un dato compilato → parte aperta
+ * e mostra un pallino verde, così chi torna a modificare non deve
+ * riaprire tutto.
+ */
+function AccordionSection({
+  icon,
+  title,
+  filled,
+  children,
+}: {
+  icon: ReactNode;
+  title: string;
+  filled: boolean;
+  children: ReactNode;
+}) {
+  const [open, setOpen] = useState(filled);
+  const bodyId = useId();
+
+  return (
+    <div className={`h-fieldset h-acc${open ? " is-open" : ""}`}>
+      <button
+        type="button"
+        className="h-acc-header"
+        aria-expanded={open}
+        aria-controls={bodyId}
+        aria-label={filled ? `${title} — sezione già compilata` : title}
+        onClick={() => setOpen((o) => !o)}
+      >
+        <span className="h-acc-ico" aria-hidden="true">
+          {icon}
+        </span>
+        <span className="h-acc-title">{title}</span>
+        {filled && <span className="h-acc-dot" title="Sezione già compilata" aria-hidden="true" />}
+        <span className="h-acc-chevron" aria-hidden="true">
+          {iconChevron}
+        </span>
+      </button>
+      <div id={bodyId} className="h-acc-body" hidden={!open}>
+        {children}
+      </div>
+    </div>
+  );
+}
 
 export default function EditConciergeForm({
   token,
@@ -161,8 +217,7 @@ export default function EditConciergeForm({
         </div>
       </fieldset>
 
-      <fieldset className="h-fieldset">
-        <legend className="h-legend">{iconWifi} Wi-Fi</legend>
+      <AccordionSection icon={iconWifi} title="Wi-Fi" filled={hasValue(property.wifi_ssid) || hasValue(property.wifi_password)}>
         <div className="h-grid">
           <div className="r-field">
             <label htmlFor="wifi_ssid">Nome rete (SSID)</label>
@@ -173,10 +228,13 @@ export default function EditConciergeForm({
             <input id="wifi_password" name="wifi_password" type="text" defaultValue={property.wifi_password ?? ""} />
           </div>
         </div>
-      </fieldset>
+      </AccordionSection>
 
-      <fieldset className="h-fieldset">
-        <legend className="h-legend">{iconKey} Arrivo e partenza</legend>
+      <AccordionSection
+        icon={iconKey}
+        title="Arrivo e partenza"
+        filled={hasValue(property.checkin_info) || hasValue(property.checkout_info) || hasValue(property.access_instructions)}
+      >
         <p className="h-hint">
           Gli orari di check-in e check-out li mostriamo già noi: qui scrivi solo la <strong>procedura</strong> —
           a chi citofonare, dove sono le chiavi, cosa fare prima di uscire.
@@ -195,10 +253,18 @@ export default function EditConciergeForm({
             <textarea id="access_instructions" name="access_instructions" rows={2} defaultValue={property.access_instructions ?? ""} placeholder="Portone, scale, ascensore, codice della cassetta..." />
           </div>
         </div>
-      </fieldset>
+      </AccordionSection>
 
-      <fieldset className="h-fieldset">
-        <legend className="h-legend">{iconHouse} La casa</legend>
+      <AccordionSection
+        icon={iconHouse}
+        title="La casa"
+        filled={
+          hasValue(property.house_rules) ||
+          hasValue(property.luggage_info) ||
+          hasValue(property.appliances_info) ||
+          hasValue(property.climate_info)
+        }
+      >
         <p className="h-hint">
           Non le regole generiche (quelle le diamo per scontate): le <strong>particolarità</strong> che solo tu conosci.
         </p>
@@ -220,10 +286,9 @@ export default function EditConciergeForm({
             <textarea id="climate_info" name="climate_info" rows={2} defaultValue={property.climate_info ?? ""} placeholder="Es. telecomando nel primo cassetto, tasto in alto per accendere; il termostato in corridoio si gira in senso orario." />
           </div>
         </div>
-      </fieldset>
+      </AccordionSection>
 
-      <fieldset className="h-fieldset">
-        <legend className="h-legend">{iconCar} Parcheggio</legend>
+      <AccordionSection icon={iconCar} title="Parcheggio" filled={hasValue(property.parking_info)}>
         <p className="h-hint">Il consiglio pratico che daresti tu di persona, non solo &laquo;c&apos;è un parcheggio&raquo;.</p>
         <div className="h-grid">
           <div className="r-field r-field-full">
@@ -231,10 +296,9 @@ export default function EditConciergeForm({
             <textarea id="parking_info" name="parking_info" rows={2} defaultValue={property.parking_info ?? ""} placeholder="Es. strisce blu gratuite dopo le 20 e la domenica; il posto sotto casa in Via Roma 4 è quasi sempre libero; il garage in cortile ha il telecomando appeso all&apos;ingresso." />
           </div>
         </div>
-      </fieldset>
+      </AccordionSection>
 
-      <fieldset className="h-fieldset">
-        <legend className="h-legend">{iconTrash} Spazzatura e raccolta differenziata</legend>
+      <AccordionSection icon={iconTrash} title="Spazzatura e raccolta differenziata" filled={hasValue(property.waste_info)}>
         <p className="h-hint">Com&apos;è organizzata dalle tue parti: cambia da via a via, l&apos;ospite non può saperlo.</p>
         <div className="h-grid">
           <div className="r-field r-field-full">
@@ -242,10 +306,13 @@ export default function EditConciergeForm({
             <textarea id="waste_info" name="waste_info" rows={2} defaultValue={property.waste_info ?? ""} placeholder="Es. i bidoni sono in cortile; umido lunedì e giovedì, plastica il mercoledì, sacchetti sotto il lavello; il vetro nella campana all&apos;angolo." />
           </div>
         </div>
-      </fieldset>
+      </AccordionSection>
 
-      <fieldset className="h-fieldset">
-        <legend className="h-legend">{iconPhone} Contatti</legend>
+      <AccordionSection
+        icon={iconPhone}
+        title="Contatti"
+        filled={hasValue(property.host_phone) || hasValue(property.host_whatsapp)}
+      >
         <p className="h-hint">Li usiamo solo noi per contattarti: non vengono mostrati agli ospiti.</p>
         <div className="h-grid">
           <div className="r-field">
@@ -257,17 +324,16 @@ export default function EditConciergeForm({
             <input id="host_whatsapp" name="host_whatsapp" type="tel" defaultValue={property.host_whatsapp ?? ""} />
           </div>
         </div>
-      </fieldset>
+      </AccordionSection>
 
-      <fieldset className="h-fieldset">
-        <legend className="h-legend">{iconNote} Note aggiuntive</legend>
+      <AccordionSection icon={iconNote} title="Note aggiuntive" filled={hasValue(property.custom_instructions)}>
         <div className="h-grid">
           <div className="r-field r-field-full">
             <label htmlFor="custom_instructions">Qualsiasi altra cosa utile ai tuoi ospiti</label>
             <textarea id="custom_instructions" name="custom_instructions" rows={3} defaultValue={property.custom_instructions ?? ""} />
           </div>
         </div>
-      </fieldset>
+      </AccordionSection>
 
       <fieldset className="h-fieldset">
         <legend className="h-legend">{iconFaq} Domande frequenti</legend>
