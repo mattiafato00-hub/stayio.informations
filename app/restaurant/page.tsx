@@ -8,10 +8,8 @@ const HERO_IMAGE =
   "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1200&q=80";
 
 // --- Percorso dell'ospite: dal check-in al tavolo del ristorante ---
-// Nota: fino allo step del ristoratore la parola "NFC" non compare mai —
-// per il guest il meccanismo è "una guida curata", non una tecnologia.
-// Solo lo strumento di raccolta recensioni (un prodotto a parte, pensato
-// per i ristoratori) la nomina esplicitamente.
+// Nota: la parola "NFC" non compare mai in questo racconto — per il
+// guest il meccanismo è "una guida curata", non una tecnologia.
 const journeySteps = [
   {
     title: "Arriva in città",
@@ -64,12 +62,6 @@ const journeySteps = [
     ),
   },
 ];
-
-const reviewToolIcon = (
-  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="m12 3 2.4 5 5.6.7-4.1 3.9 1 5.6L12 15.8 6.9 18.2l1-5.6L3.8 8.7l5.6-.7L12 3Z" />
-  </svg>
-);
 
 /**
  * Sezione "come arrivano davvero i clienti": timeline verticale con
@@ -152,47 +144,8 @@ function GuestJourneyFlow() {
 
       <div className="r-flow-outcome">
         <h3>
-          Più clienti. <em>Più recensioni.</em>
+          Più clienti, <em>quando contano di più.</em>
         </h3>
-      </div>
-    </section>
-  );
-}
-
-/**
- * Sezione a parte, deliberatamente lontana da GuestJourneyFlow: quella
- * sezione racconta come un cliente NUOVO ti trova (la guida digitale
- * negli hotel/B&B); questa racconta cosa succede quando è già seduto al
- * tuo tavolo — un momento diverso, un prodotto diverso (il tag NFC per
- * la raccolta recensioni), quindi non va mescolato lì.
- */
-function ReviewToolSection() {
-  return (
-    <section className="r-flow" aria-label="Quando il cliente è già da te">
-      <div className="r-flow-intro">
-        <p className="eyebrow">
-          <span className="dot" /> Un altro momento, un altro strumento
-        </p>
-        <h2>Il cliente è già al tuo tavolo.</h2>
-        <p className="intro">
-          Da qui in poi l&apos;obiettivo cambia: trasformare una buona serata in una
-          recensione vera, raccolta sul posto — non giorni dopo, se va bene.
-        </p>
-      </div>
-
-      <div className="r-flow-bonus">
-        <span className="r-flow-bonus-tag">Un prodotto a parte, pensato per i ristoratori</span>
-        <div className="r-flow-bonus-body">
-          <span className="r-flow-bonus-icon">{reviewToolIcon}</span>
-          <div>
-            <h3>La recensione arriva sul momento</h3>
-            <p>
-              Con lo strumento di raccolta recensioni Stayio — un tag NFC da appoggiare in
-              cassa o sul tavolo — il cliente ne lascia una in pochi secondi, mentre il
-              ricordo della serata è ancora fresco.
-            </p>
-          </div>
-        </div>
       </div>
     </section>
   );
@@ -322,8 +275,6 @@ export default function RestaurantPage() {
           </article>
         ))}
       </section>
-
-      <ReviewToolSection />
 
       <section className="r-form-section" id="richiedi">
         <div className="r-form-intro">
