@@ -293,7 +293,7 @@ export default function RestaurantPage() {
           <h1>Nuovi clienti, proprio quando sono pronti a scegliere.</h1>
           <p className="intro">
             I turisti alloggiati negli hotel e B&amp;B partner trovano il tuo ristorante nella
-            guida digitale Stayio, proprio mentre decidono dove cenare.
+            guida digitale Stayio, proprio mentre decidono dove mangiare.
           </p>
           <a href="#richiedi" className="r-cta">
             Richiedi informazioni <span aria-hidden="true">→</span>
