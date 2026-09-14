@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 
 const HERO_IMAGE =
   "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1200&q=80";
@@ -41,11 +41,151 @@ const benefits = [
   },
 ];
 
-const steps = [
-  ["Racconti la tua struttura", "Un modulo semplice: compili quello che ti serve, salti il resto."],
-  ["Ricevi il tuo concierge", "Lo portiamo noi nella tua struttura, pronto all'uso: i tuoi ospiti lo trovano da soli, senza che tu debba fare nulla."],
-  ["Gli ospiti fanno da sé", "Meno messaggi per te, più autonomia per loro — dal primo giorno."],
+// --- Cosa succede dopo l'attivazione: dal modulo al primo ospite che
+// non ti scrive più a mezzanotte per il Wi-Fi. Stessa struttura/CSS
+// condivisa con il flusso della pagina /restaurant (:is(.restaurant,
+// .host) .r-flow*), contenuto adattato ai benefici dell'host: il
+// concierge come servizio in più offerto senza sforzo, e le domande
+// ripetitive che non arrivano più a te.
+const conciergeJourneySteps = [
+  {
+    title: "Racconti la tua struttura",
+    text: "Un modulo semplice: Wi-Fi, orari, regole della casa. Lo compili una volta, lo aggiorni quando vuoi.",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M6 3h9l4 4v14H6Z" />
+        <path d="M15 3v4h4" />
+        <path d="M9 12h7M9 16h7" />
+      </svg>
+    ),
+  },
+  {
+    title: "Il tuo concierge è pronto",
+    text: "Lo attiviamo noi nella tua struttura: i tuoi ospiti lo trovano da soli, senza installare nulla.",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="9" />
+        <path d="m8 12.5 2.5 2.5 5-5.5" />
+      </svg>
+    ),
+  },
+  {
+    title: "Un ospite ha una domanda",
+    text: "Wi-Fi? Check-in? Un posto dove mangiare stasera? Prima o poi arriva sempre, a qualsiasi ora.",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="9" />
+        <path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .7-1 1.4v.3" />
+        <circle cx="12" cy="16.7" r="0.15" fill="currentColor" />
+      </svg>
+    ),
+  },
+  {
+    title: "Il concierge risponde, non tu",
+    text: "24 ore su 24, anche quando dormi o sei fuori — niente più messaggi ripetuti a tutte le ore.",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="9" />
+        <path d="M12 7v5l3.5 2" />
+      </svg>
+    ),
+  },
+  {
+    title: "Il tuo ospite si sente seguito",
+    text: "Un servizio in più che offri senza sforzo — e che si vede nelle recensioni della tua struttura.",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M12 20.5s-7.5-4.6-7.5-10A4.5 4.5 0 0 1 12 7.3 4.5 4.5 0 0 1 19.5 10.5c0 5.4-7.5 10-7.5 10Z" />
+      </svg>
+    ),
+  },
 ];
+
+/**
+ * Sezione "cosa succede dopo l'attivazione": stessa timeline animata a
+ * scroll-reveal + puntini in loop della pagina /restaurant, con
+ * contenuto adattato ai benefici dell'host (vedi conciergeJourneySteps).
+ */
+function HostConciergeFlow() {
+  const [visible, setVisible] = useState<boolean[]>(() => conciergeJourneySteps.map(() => false));
+  const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  useEffect(() => {
+    const targets = stepRefs.current.filter((el): el is HTMLDivElement => el !== null);
+    if (targets.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          const index = Number((entry.target as HTMLElement).dataset.index);
+          setVisible((prev) => {
+            if (prev[index]) return prev;
+            const next = [...prev];
+            next[index] = true;
+            return next;
+          });
+          observer.unobserve(entry.target);
+        });
+      },
+      { threshold: 0.4, rootMargin: "0px 0px -10% 0px" }
+    );
+
+    targets.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <section className="r-flow" aria-label="Cosa succede dopo l'attivazione">
+      <noscript>
+        <style>{`.host .r-flow-step{opacity:1!important;transform:none!important}`}</style>
+      </noscript>
+
+      <div className="r-flow-intro">
+        <p className="eyebrow">
+          <span className="dot" /> Come funziona davvero
+        </p>
+        <h2>Sempre lì, anche quando tu non ci sei.</h2>
+        <p className="intro">
+          Non un&apos;app in più da gestire. Un aiuto reale che risponde ai tuoi ospiti ogni
+          giorno, comparendo solo quando serve davvero.
+        </p>
+      </div>
+
+      <div className="r-flow-timeline">
+        <span className="r-flow-line" aria-hidden="true" />
+        {[0, 1, 2].map((i) => (
+          <span key={i} className="r-flow-traveler" style={{ animationDelay: `${i * 2.5}s` }} aria-hidden="true" />
+        ))}
+
+        {conciergeJourneySteps.map((step, index) => (
+          <div
+            key={step.title}
+            ref={(el) => {
+              stepRefs.current[index] = el;
+            }}
+            data-index={index}
+            className={`r-flow-step${visible[index] ? " is-visible" : ""}`}
+            style={{ transitionDelay: visible[index] ? `${index * 90}ms` : "0ms" }}
+          >
+            <span className="r-flow-node">{index + 1}</span>
+            <div className="r-flow-card">
+              <span className="r-flow-icon">{step.icon}</span>
+              <h3>{step.title}</h3>
+              <p>{step.text}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="r-flow-outcome">
+        <h3>
+          Meno domande. <em>Ospiti più felici.</em>
+        </h3>
+      </div>
+    </section>
+  );
+}
 
 type Status = "idle" | "sending" | "sent" | "error";
 
@@ -164,14 +304,7 @@ export default function HostPage() {
         ))}
       </section>
 
-      <section className="h-steps" aria-label="Come funziona">
-        {steps.map(([title, text]) => (
-          <div className="h-step" key={title}>
-            <strong>{title}</strong>
-            <span>{text}</span>
-          </div>
-        ))}
-      </section>
+      <HostConciergeFlow />
 
       <section className="r-form-section" id="registra">
         <div className="r-form-intro">
