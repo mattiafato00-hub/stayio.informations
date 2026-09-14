@@ -150,6 +150,36 @@ function GuestJourneyFlow() {
         ))}
       </div>
 
+      <div className="r-flow-outcome">
+        <h3>
+          Più clienti. <em>Più recensioni.</em>
+        </h3>
+      </div>
+    </section>
+  );
+}
+
+/**
+ * Sezione a parte, deliberatamente lontana da GuestJourneyFlow: quella
+ * sezione racconta come un cliente NUOVO ti trova (la guida digitale
+ * negli hotel/B&B); questa racconta cosa succede quando è già seduto al
+ * tuo tavolo — un momento diverso, un prodotto diverso (il tag NFC per
+ * la raccolta recensioni), quindi non va mescolato lì.
+ */
+function ReviewToolSection() {
+  return (
+    <section className="r-flow" aria-label="Quando il cliente è già da te">
+      <div className="r-flow-intro">
+        <p className="eyebrow">
+          <span className="dot" /> Un altro momento, un altro strumento
+        </p>
+        <h2>Il cliente è già al tuo tavolo.</h2>
+        <p className="intro">
+          Da qui in poi l&apos;obiettivo cambia: trasformare una buona serata in una
+          recensione vera, raccolta sul posto — non giorni dopo, se va bene.
+        </p>
+      </div>
+
       <div className="r-flow-bonus">
         <span className="r-flow-bonus-tag">Un prodotto a parte, pensato per i ristoratori</span>
         <div className="r-flow-bonus-body">
@@ -163,12 +193,6 @@ function GuestJourneyFlow() {
             </p>
           </div>
         </div>
-      </div>
-
-      <div className="r-flow-outcome">
-        <h3>
-          Più clienti. <em>Più recensioni.</em>
-        </h3>
       </div>
     </section>
   );
@@ -267,7 +291,10 @@ export default function RestaurantPage() {
             <span className="dot" /> Per i ristoranti
           </p>
           <h1>Nuovi clienti, proprio quando sono pronti a scegliere.</h1>
-          <p className="intro">Chi ospita ti apre la porta. Chi arriva, si siede al tuo tavolo.</p>
+          <p className="intro">
+            I turisti alloggiati negli hotel e B&amp;B partner trovano il tuo ristorante nella
+            guida digitale Stayio, proprio mentre decidono dove cenare.
+          </p>
           <a href="#richiedi" className="r-cta">
             Richiedi informazioni <span aria-hidden="true">→</span>
           </a>
@@ -295,6 +322,8 @@ export default function RestaurantPage() {
           </article>
         ))}
       </section>
+
+      <ReviewToolSection />
 
       <section className="r-form-section" id="richiedi">
         <div className="r-form-intro">
