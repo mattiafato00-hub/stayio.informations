@@ -144,7 +144,7 @@ function GuestJourneyFlow() {
 
       <div className="r-flow-outcome">
         <h3>
-          Più clienti. <em>Più recensioni.</em>
+          Più clienti, <em>quando contano di più.</em>
         </h3>
       </div>
     </section>
