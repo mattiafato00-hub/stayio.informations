@@ -653,64 +653,6 @@ footer .wordmark { color: #fff; }
   margin: 0;
 }
 
-/* Card "bonus", visivamente separata: è un prodotto a parte (NFC per
-   la raccolta recensioni), non un altro step dello stesso percorso. */
-:is(.restaurant, .host) .r-flow-bonus {
-  max-width: 620px;
-  margin: 28px auto 0;
-  padding: 24px 26px;
-  border-radius: 18px;
-  background: rgba(200, 29, 58, 0.1);
-  border: 1px solid rgba(255, 138, 147, 0.35);
-}
-
-:is(.restaurant, .host) .r-flow-bonus-tag {
-  display: inline-block;
-  font-family: var(--font-inter), "Inter", sans-serif;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--accent-bright);
-  margin-bottom: 14px;
-}
-
-:is(.restaurant, .host) .r-flow-bonus-body {
-  display: flex;
-  gap: 16px;
-  align-items: flex-start;
-}
-
-:is(.restaurant, .host) .r-flow-bonus-icon {
-  flex-shrink: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  background: var(--accent);
-  color: #ffffff;
-}
-
-:is(.restaurant, .host) .r-flow-bonus-icon svg {
-  width: 20px;
-  height: 20px;
-}
-
-:is(.restaurant, .host) .r-flow-bonus-body h3 {
-  font-size: 17px;
-  margin: 0 0 6px;
-}
-
-:is(.restaurant, .host) .r-flow-bonus-body p {
-  font-family: var(--font-inter), "Inter", sans-serif;
-  font-size: 13.5px;
-  line-height: 1.55;
-  color: #f1d9db;
-  margin: 0;
-}
-
 :is(.restaurant, .host) .r-flow-outcome {
   text-align: center;
   margin-top: 52px;
@@ -738,7 +680,6 @@ footer .wordmark { color: #fff; }
   :is(.restaurant, .host) .r-flow-node { left: -42px; width: 32px; height: 32px; font-size: 12px; }
   :is(.restaurant, .host) .r-flow-line { left: 15px; }
   :is(.restaurant, .host) .r-flow-traveler { left: 10px; }
-  :is(.restaurant, .host) .r-flow-bonus-body { flex-direction: column; }
 }
 
 /* --- Form --- */
