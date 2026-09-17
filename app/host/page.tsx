@@ -189,29 +189,9 @@ function HostConciergeFlow() {
 
 type Status = "idle" | "sending" | "sent" | "error";
 
-const iconWhatsapp = (
-  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M12 2a10 10 0 0 0-8.6 15l-1.3 4.8 5-1.3A10 10 0 1 0 12 2Zm5.8 14.2c-.2.7-1.4 1.3-2 1.4-.5.1-1.2.1-1.9-.1-.4-.1-1-.3-1.7-.6-3-1.3-4.9-4.3-5.1-4.5-.1-.2-1.2-1.5-1.2-2.9 0-1.4.7-2 1-2.3.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.3.5-.4.4c-.1.1-.3.3-.1.6.1.3.7 1.1 1.5 1.8 1 .9 1.8 1.1 2.1 1.3.3.1.5.1.6-.1l.7-.9c.2-.2.4-.2.6-.1l1.9.9c.2.1.4.2.4.3.1.2.1.8-.1 1.4Z" />
-  </svg>
-);
-const iconEdit = (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <path d="M12 20h9" />
-    <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5Z" />
-  </svg>
-);
-
 export default function HostPage() {
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
-  const [result, setResult] = useState<{ editToken?: string; suggestedSlug?: string } | null>(null);
-  // Base URL del concierge: in produzione si può forzare con NEXT_PUBLIC_SITE_URL,
-  // altrimenti si usa l'origin corrente (localhost in locale, dominio reale in prod).
-  const [siteUrl] = useState(() => {
-    const configured = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
-    if (configured) return configured;
-    return typeof window !== "undefined" ? window.location.origin : "";
-  });
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -238,7 +218,6 @@ export default function HostPage() {
       const json = await response.json().catch(() => null);
 
       if (response.ok && json?.success) {
-        setResult({ editToken: json.editToken, suggestedSlug: json.suggestedSlug });
         setStatus("sent");
         return;
       }
@@ -250,15 +229,6 @@ export default function HostPage() {
       setStatus("error");
     }
   }
-
-  const editPath = result?.editToken ? `/il-mio-concierge/${result.editToken}` : null;
-  const editUrl = editPath && siteUrl ? `${siteUrl}${editPath}` : null;
-  const siteHost = siteUrl.replace(/^https?:\/\//, "");
-  const whatsappHref = `https://wa.me/?text=${encodeURIComponent(
-    editUrl
-      ? `Il mio concierge digitale Stayio. Link personale per aggiungere e modificare le info: ${editUrl}`
-      : "Il mio concierge digitale Stayio.",
-  )}`;
 
   return (
     <main className="landing host">
@@ -318,33 +288,11 @@ export default function HostPage() {
         {status === "sent" ? (
           <div className="r-success" role="status">
             <span className="r-success-mark" aria-hidden="true">✓</span>
-            <h3>Il tuo concierge è già attivo.</h3>
+            <h3>Richiesta ricevuta.</h3>
             <p>
-              Quando hai qualche minuto, torna sul tuo link personale per aggiungere Wi-Fi, regole
-              della casa e tutte le altre informazioni utili ai tuoi ospiti.
+              Grazie! Ti contattiamo a breve per attivare il tuo concierge e darti il tuo link
+              personale per aggiungere Wi-Fi, regole della casa e tutte le info utili ai tuoi ospiti.
             </p>
-
-            <div className="h-success-actions">
-              {editPath && (
-                <a className="h-edit-cta" href={editPath}>
-                  {iconEdit} Aggiungi i dettagli ora
-                </a>
-              )}
-              <a className="h-wa" href={whatsappHref} target="_blank" rel="noopener noreferrer">
-                {iconWhatsapp} Salva il link su WhatsApp
-              </a>
-            </div>
-
-            {editUrl && (
-              <p className="h-success-link">
-                Il tuo link personale (salvalo): <code>{editUrl}</code>
-              </p>
-            )}
-            {result?.suggestedSlug && (
-              <p className="h-success-slug">
-                Indirizzo del concierge: <code>{siteHost ? `${siteHost}/` : ""}{result.suggestedSlug}</code>
-              </p>
-            )}
           </div>
         ) : (
           <>

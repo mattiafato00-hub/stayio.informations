@@ -2,13 +2,20 @@ import nodemailer from "nodemailer";
 
 const NOTIFY_TO = "stayio267@gmail.com";
 
-// Editor tabella property_details su Supabase (per ritrovare la riga tramite l'ID).
+// Editor tabella property_details su Supabase (per ritrovare la riga tramite l'ID)
+// — usato solo per "update", dove la property esiste davvero.
 const SUPABASE_ROW_LINK =
   "https://supabase.com/dashboard/project/jevhncphroifhtnuivkv/editor?table=property_details";
 
+// Elenco leads su stayio.it — usato per "signup", dove ora non si crea più
+// una property in automatico, solo una riga in leads da gestire a mano.
+const ADMIN_LEADS_LINK = "https://www.stayio.it/admin/leads";
+
 type HostNotification = {
   kind: "signup" | "update";
-  propertyId: string;
+  // null per "signup": non si crea più una property in automatico, solo
+  // una riga in leads — vedi app/api/host-signup/route.ts.
+  propertyId: string | null;
   name?: string | null;
   email?: string | null;
   phone?: string | null;
@@ -47,14 +54,14 @@ export async function sendHostNotification(n: HostNotification): Promise<void> {
 
     const lines = [
       n.kind === "signup"
-        ? "Un nuovo host ha attivato il concierge digitale."
+        ? "Una nuova richiesta di attivazione concierge è stata salvata (nessuna property creata in automatico)."
         : "Un host ha completato o modificato i dati del proprio concierge.",
       "",
       `Nome dell'alloggio: ${n.name?.trim() || "—"}`,
       `Email host: ${n.email?.trim() || "—"}`,
       `Telefono / WhatsApp: ${contacts.length > 0 ? contacts.join(" / ") : "non fornito"}`,
-      `Property ID: ${n.propertyId}`,
-      `Apri su Supabase: ${SUPABASE_ROW_LINK}`,
+      n.propertyId ? `Property ID: ${n.propertyId}` : "La richiesta è in /admin/leads su stayio.it.",
+      n.propertyId ? `Apri su Supabase: ${SUPABASE_ROW_LINK}` : `Apri: ${ADMIN_LEADS_LINK}`,
       `Data/ora: ${timestamp}`,
     ];
 
@@ -72,7 +79,7 @@ export async function sendHostNotification(n: HostNotification): Promise<void> {
     });
 
     console.log(
-      `[host-notify] Notifica "${n.kind}" inviata a ${NOTIFY_TO} per property ${n.propertyId} (messageId: ${info.messageId}).`,
+      `[host-notify] Notifica "${n.kind}" inviata a ${NOTIFY_TO} per ${n.propertyId ? `property ${n.propertyId}` : "un lead (nessuna property)"} (messageId: ${info.messageId}).`,
     );
   } catch (err) {
     console.error("[host-notify] Invio notifica email fallito:", err);
