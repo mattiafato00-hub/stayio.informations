@@ -11,7 +11,9 @@ const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-async function loadProperty(token: string): Promise<{ property: ConciergeProperty; faqs: FaqRow[] } | null> {
+async function loadProperty(
+  token: string,
+): Promise<{ property: ConciergeProperty; faqs: FaqRow[]; guideVisits30d: number; hasNfcTag: boolean } | null> {
   if (!UUID_RE.test(token)) return null;
 
   const supabase = createClient(supabaseUrl, serviceRoleKey);
@@ -19,7 +21,7 @@ async function loadProperty(token: string): Promise<{ property: ConciergePropert
   const { data: property, error } = await supabase
     .from("property_details")
     .select(
-      "id, name, address, wifi_ssid, wifi_password, checkin_info, checkout_info, access_instructions, house_rules, parking_info, waste_info, luggage_info, appliances_info, climate_info, host_phone, host_whatsapp, custom_instructions, suggested_slug",
+      "id, name, address, wifi_ssid, wifi_password, checkin_info, checkout_info, access_instructions, house_rules, parking_info, waste_info, luggage_info, appliances_info, climate_info, host_phone, host_whatsapp, custom_instructions, suggested_slug, nfc_source_id",
     )
     .eq("edit_token", token)
     .maybeSingle();
@@ -32,9 +34,34 @@ async function loadProperty(token: string): Promise<{ property: ConciergePropert
     .eq("property_id", property.id)
     .order("sort_order", { ascending: true });
 
+  // Stesso dato mostrato nel dashboard con login (guide_visits) — qui
+  // niente RLS da rispettare: il service role vede tutto, l'identità la
+  // dà il possesso del token, non una sessione.
+  let guideVisits30d = 0;
+  if (property.nfc_source_id) {
+    const { data: source } = await supabase
+      .from("nfc_sources")
+      .select("code")
+      .eq("id", property.nfc_source_id)
+      .maybeSingle();
+
+    if (source?.code) {
+      const since = new Date();
+      since.setDate(since.getDate() - 30);
+      const { count } = await supabase
+        .from("guide_visits")
+        .select("id", { count: "exact", head: true })
+        .eq("source_code", source.code)
+        .gte("created_at", since.toISOString());
+      guideVisits30d = count ?? 0;
+    }
+  }
+
   return {
     property: property as ConciergeProperty,
     faqs: (faqs ?? []).map((f) => ({ question: f.question ?? "", answer: f.answer ?? "" })),
+    guideVisits30d,
+    hasNfcTag: Boolean(property.nfc_source_id),
   };
 }
 
@@ -59,6 +86,16 @@ export default async function EditConciergePage({ params }: { params: Promise<{ 
             <h1>{data.property.name || "Il tuo concierge"}</h1>
             <p>Aggiungi o modifica le informazioni che i tuoi ospiti vedranno. Salva quando vuoi, anche un pezzo alla volta.</p>
           </header>
+
+          {data.hasNfcTag && (
+            <div className="h-stats">
+              <span className="h-stats-value">{data.guideVisits30d}</span>
+              <span className="h-stats-label">
+                {data.guideVisits30d === 1 ? "persona ha toccato" : "persone hanno toccato"} il tuo tag NFC negli
+                ultimi 30 giorni
+              </span>
+            </div>
+          )}
 
           <section className="r-form-section">
             <EditConciergeForm token={token} property={data.property} faqs={data.faqs} />
