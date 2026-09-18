@@ -1216,6 +1216,34 @@ footer .wordmark { color: #fff; }
   margin: 0;
 }
 
+.host .h-stats {
+  max-width: 480px;
+  margin: 0 auto 8px;
+  padding: 14px 28px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  text-align: center;
+}
+
+.host .h-stats-value {
+  font-family: var(--font-manrope), "Manrope", sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--accent-bright);
+}
+
+.host .h-stats-label {
+  font-family: var(--font-inter), "Inter", sans-serif;
+  font-size: 12.5px;
+  color: #e8c7c9;
+}
+
 .host .h-edit-saved {
   position: sticky;
   bottom: 16px;
