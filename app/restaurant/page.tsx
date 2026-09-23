@@ -104,9 +104,7 @@ function GuestJourneyFlow() {
       </noscript>
 
       <div className="r-flow-intro">
-        <p className="eyebrow">
-          <span className="dot" /> Come funziona davvero
-        </p>
+        <p className="eyebrow">Come funziona davvero</p>
         <h2>Dal check-in al tuo tavolo.</h2>
         <p className="intro">
           Non pubblicità a pioggia. Un percorso reale che ogni giorno porta persone vere
@@ -261,9 +259,7 @@ export default function RestaurantPage() {
 
       <section className="r-form-section" id="richiedi">
         <div className="r-form-intro">
-          <p className="eyebrow">
-            <span className="dot" /> Meno di un minuto
-          </p>
+          <p className="eyebrow">Meno di un minuto</p>
           <h2>Raccontaci del tuo locale</h2>
           <p>Ti ricontattiamo con il pacchetto giusto per la tua attività. Nessun impegno.</p>
         </div>
