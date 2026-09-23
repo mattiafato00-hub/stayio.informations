@@ -162,6 +162,27 @@ footer .wordmark { color: #fff; }
   justify-content: center;
 }
 
+/* --- Logo header: rivelazione da sinistra a destra al primo mount.
+   Header vive nel root layout e viene montato una sola volta per
+   sessione: l'animazione parte al primo caricamento del sito e non
+   si ripete durante la navigazione client-side tra pagine. Il logo
+   nel footer (Footer.tsx) resta statico, non riceve questa classe. --- */
+@keyframes logo-reveal {
+  from { clip-path: inset(0 100% 0 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+
+.logo-reveal {
+  animation: logo-reveal 650ms ease-out forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .logo-reveal {
+    animation: none;
+    clip-path: inset(0 0 0 0);
+  }
+}
+
 .landing .hero {
   display: block;
   max-width: 760px;
