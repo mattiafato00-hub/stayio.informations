@@ -59,9 +59,7 @@ export default function OtherPage() {
     <main className="other">
       <section className="r-hero">
         <div className="r-hero-copy">
-          <p className="eyebrow">
-            <span className="dot" /> Tutto il resto
-          </p>
+          <p className="eyebrow">Tutto il resto</p>
           <h1>Hai un&apos;attività locale, o sei interessato a Stayio in altro modo?</h1>
           <p className="intro">
             Se gestisci un bar, un beach club, organizzi esperienze o eventi, sei un investitore
