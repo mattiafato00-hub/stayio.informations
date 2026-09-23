@@ -388,6 +388,58 @@ footer .wordmark { color: #fff; }
   box-shadow: 0 14px 30px rgba(200, 29, 58, 0.4);
 }
 
+/* --- Hero text reveal: fade + slide dal basso, solo nelle 4 hero di
+   pagina (homepage .hero, host/restaurant/other .r-hero-copy). Non
+   tocca le sezioni r-flow-intro / r-form-intro più in basso, che non
+   condividono queste classi. --- */
+@keyframes hero-reveal {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.hero .eyebrow,
+.hero h1,
+.hero .intro,
+.r-hero-copy .eyebrow,
+.r-hero-copy h1,
+.r-hero-copy .intro,
+.r-hero-copy .r-cta {
+  animation: hero-reveal 550ms ease-out both;
+}
+
+.hero .eyebrow,
+.r-hero-copy .eyebrow {
+  animation-delay: 0ms;
+}
+
+.hero h1,
+.r-hero-copy h1 {
+  animation-delay: 100ms;
+}
+
+.hero .intro,
+.r-hero-copy .intro {
+  animation-delay: 200ms;
+}
+
+.r-hero-copy .r-cta {
+  animation-delay: 300ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero .eyebrow,
+  .hero h1,
+  .hero .intro,
+  .r-hero-copy .eyebrow,
+  .r-hero-copy h1,
+  .r-hero-copy .intro,
+  .r-hero-copy .r-cta {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
 :is(.restaurant, .host, .other) .r-hero-media {
   position: relative;
   min-height: 380px;

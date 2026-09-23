@@ -30,9 +30,7 @@ export default function Home() {
   return (
     <main>
       <section className="hero">
-        <p className="eyebrow">
-          <span className="dot" /> Per chi accoglie, per chi serve, per chi scopre
-        </p>
+        <p className="eyebrow">Per chi accoglie, per chi serve, per chi scopre</p>
         <h1>
           Nuovi clienti, proprio quando sono pronti a scegliere.
         </h1>

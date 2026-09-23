@@ -232,9 +232,7 @@ export default function HostPage() {
     <main className="host">
       <section className="r-hero">
         <div className="r-hero-copy">
-          <p className="eyebrow">
-            <span className="dot" /> Per chi ospita
-          </p>
+          <p className="eyebrow">Per chi ospita</p>
           <h1>Il concierge digitale che risponde ai tuoi ospiti al posto tuo.</h1>
           <p className="intro">
             Wi-Fi, check-in, regole della casa, consigli sul quartiere: una pagina sempre aggiornata

@@ -232,9 +232,7 @@ export default function RestaurantPage() {
     <main className="restaurant">
       <section className="r-hero">
         <div className="r-hero-copy">
-          <p className="eyebrow">
-            <span className="dot" /> Per i ristoranti
-          </p>
+          <p className="eyebrow">Per i ristoranti</p>
           <h1>Nuovi clienti, proprio quando sono pronti a scegliere.</h1>
           <p className="intro">
             I turisti alloggiati negli hotel e B&amp;B partner trovano il tuo ristorante nella
