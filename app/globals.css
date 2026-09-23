@@ -278,14 +278,6 @@ footer .wordmark { color: #fff; }
   position: relative;
 }
 
-.landing .category-emoji {
-  position: absolute;
-  bottom: 12px;
-  left: 16px;
-  font-size: 26px;
-  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.5));
-}
-
 .landing .category-body {
   padding: 22px 22px 26px;
   display: flex;
