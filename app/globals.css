@@ -1304,14 +1304,6 @@ footer .wordmark { color: #fff; }
   text-align: center;
 }
 
-.other .o-audiences-label {
-  font-family: var(--font-inter), "Inter", sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  color: #ff8a93;
-  margin: 0 0 18px;
-}
-
 .other .o-audiences-list {
   list-style: none;
   margin: 0;
