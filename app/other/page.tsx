@@ -1,7 +1,5 @@
 "use client";
 
-import Image from "next/image";
-import Link from "next/link";
 import { FormEvent, useState } from "react";
 
 const HERO_IMAGE =
@@ -58,13 +56,7 @@ export default function OtherPage() {
   }
 
   return (
-    <main className="landing other">
-      <nav className="nav">
-        <Link href="/">
-          <Image src="/stayio-logo.png" alt="Stayio" width={325} height={104} style={{ width: "325px", height: "auto" }} priority />
-        </Link>
-      </nav>
-
+    <main className="other">
       <section className="r-hero">
         <div className="r-hero-copy">
           <p className="eyebrow">
@@ -155,11 +147,6 @@ export default function OtherPage() {
           </form>
         )}
       </section>
-
-      <footer className="footer">
-        <Image src="/stayio-logo.png" alt="Stayio" width={90} height={29} style={{ width: "90px", height: "auto" }} />
-        <span>© 2026 Stayio</span>
-      </footer>
     </main>
   );
 }

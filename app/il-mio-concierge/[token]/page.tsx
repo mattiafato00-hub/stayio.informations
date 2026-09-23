@@ -1,6 +1,4 @@
 import { createClient } from "@supabase/supabase-js";
-import Image from "next/image";
-import Link from "next/link";
 
 import EditConciergeForm, { type ConciergeProperty, type FaqRow } from "./EditConciergeForm";
 
@@ -70,13 +68,7 @@ export default async function EditConciergePage({ params }: { params: Promise<{ 
   const data = await loadProperty(token);
 
   return (
-    <main className="landing host">
-      <nav className="nav">
-        <Link href="/">
-          <Image src="/stayio-logo.png" alt="Stayio" width={325} height={104} style={{ width: "325px", height: "auto" }} priority />
-        </Link>
-      </nav>
-
+    <main className="host">
       {data ? (
         <>
           <header className="h-edit-head">
@@ -112,11 +104,6 @@ export default async function EditConciergePage({ params }: { params: Promise<{ 
           </div>
         </section>
       )}
-
-      <footer className="footer">
-        <Image src="/stayio-logo.png" alt="Stayio" width={90} height={29} style={{ width: "90px", height: "auto" }} />
-        <span>© 2026 Stayio</span>
-      </footer>
     </main>
   );
 }

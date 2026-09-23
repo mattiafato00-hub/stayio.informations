@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 
 const categories = [
@@ -29,11 +28,7 @@ const categories = [
 
 export default function Home() {
   return (
-    <main className="landing">
-      <nav className="nav">
-        <Image src="/stayio-logo.png" alt="Stayio" width={325} height={104} style={{ width: "325px", height: "auto" }} priority />
-      </nav>
-
+    <main>
       <section className="hero">
         <p className="eyebrow">
           <span className="dot" /> Per chi accoglie, per chi serve, per chi scopre
@@ -63,11 +58,6 @@ export default function Home() {
           ))}
         </div>
       </section>
-
-      <footer className="footer">
-        <Image src="/stayio-logo.png" alt="Stayio" width={90} height={29} style={{ width: "90px", height: "auto" }} />
-        <span>© 2026 Stayio</span>
-      </footer>
     </main>
   );
 }
