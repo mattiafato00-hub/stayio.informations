@@ -140,9 +140,7 @@ function HostConciergeFlow() {
       </noscript>
 
       <div className="r-flow-intro">
-        <p className="eyebrow">
-          <span className="dot" /> Come funziona davvero
-        </p>
+        <p className="eyebrow">Come funziona davvero</p>
         <h2>Sempre lì, anche quando tu non ci sei.</h2>
         <p className="intro">
           Non un&apos;app in più da gestire. Un aiuto reale che risponde ai tuoi ospiti ogni
@@ -260,9 +258,7 @@ export default function HostPage() {
 
       <section className="r-form-section" id="registra">
         <div className="r-form-intro">
-          <p className="eyebrow">
-            <span className="dot" /> Gratis · 30 secondi
-          </p>
+          <p className="eyebrow">Gratis · 30 secondi</p>
           <h2>Attiva il tuo concierge</h2>
           <p>Ci servono solo tre cose per crearlo. I dettagli li aggiungi dopo, con calma.</p>
         </div>

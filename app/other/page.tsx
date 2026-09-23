@@ -86,9 +86,7 @@ export default function OtherPage() {
 
       <section className="r-form-section" id="scrivici">
         <div className="r-form-intro">
-          <p className="eyebrow">
-            <span className="dot" /> Meno di un minuto
-          </p>
+          <p className="eyebrow">Meno di un minuto</p>
           <h2>Raccontaci di più</h2>
           <p>Poche righe bastano. Ti rispondiamo noi con i passi successivi.</p>
         </div>

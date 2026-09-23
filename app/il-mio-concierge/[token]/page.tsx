@@ -72,9 +72,7 @@ export default async function EditConciergePage({ params }: { params: Promise<{ 
       {data ? (
         <>
           <header className="h-edit-head">
-            <p className="eyebrow">
-              <span className="dot" /> Il tuo concierge
-            </p>
+            <p className="eyebrow">Il tuo concierge</p>
             <h1>{data.property.name || "Il tuo concierge"}</h1>
             <p>Aggiungi o modifica le informazioni che i tuoi ospiti vedranno. Salva quando vuoi, anche un pezzo alla volta.</p>
           </header>
