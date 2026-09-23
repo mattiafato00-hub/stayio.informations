@@ -76,7 +76,7 @@ export default function OtherPage() {
       </section>
 
       <section className="o-audiences" aria-label="Chi ci scrive di solito">
-        <p className="o-audiences-label">Chi ci scrive di solito</p>
+        <p className="eyebrow">Chi ci scrive di solito</p>
         <ul className="o-audiences-list">
           {audiences.map((audience) => (
             <li key={audience}>{audience}</li>
