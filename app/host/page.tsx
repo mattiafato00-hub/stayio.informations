@@ -236,22 +236,14 @@ export default function HostPage() {
           <h1>Il concierge digitale che risponde ai tuoi ospiti al posto tuo.</h1>
           <p className="intro">
             Wi-Fi, check-in, regole della casa, consigli sul quartiere: una pagina sempre aggiornata
-            che i tuoi ospiti consultano da soli. Gratuita.
+            che i tuoi ospiti consultano da soli, 24/7. Gratuita.
           </p>
           <a href="#registra" className="r-cta">
             Attiva il concierge gratuito <span aria-hidden="true">→</span>
           </a>
         </div>
 
-        <div className="r-hero-media" style={{ backgroundImage: `url(${HERO_IMAGE})` }}>
-          <div className="r-hero-badge">
-            <span className="r-hero-badge-pulse" aria-hidden="true" />
-            <div>
-              <strong>Rispondo io agli ospiti</strong>
-              <span>Wi-Fi, check-in, regole · 24/7</span>
-            </div>
-          </div>
-        </div>
+        <div className="r-hero-media" style={{ backgroundImage: `url(${HERO_IMAGE})` }} />
       </section>
 
       <section className="r-benefits" aria-label="Perché Stayio per gli host">

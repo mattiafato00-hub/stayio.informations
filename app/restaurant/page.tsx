@@ -241,17 +241,10 @@ export default function RestaurantPage() {
           <a href="#richiedi" className="r-cta">
             Richiedi informazioni <span aria-hidden="true">→</span>
           </a>
+          <p className="r-hero-note">Ospiti in arrivo dalle strutture qui vicino.</p>
         </div>
 
-        <div className="r-hero-media" style={{ backgroundImage: `url(${HERO_IMAGE})` }}>
-          <div className="r-hero-badge">
-            <span className="r-hero-badge-pulse" aria-hidden="true" />
-            <div>
-              <strong>Ospiti in arrivo</strong>
-              <span>dalle strutture qui vicino</span>
-            </div>
-          </div>
-        </div>
+        <div className="r-hero-media" style={{ backgroundImage: `url(${HERO_IMAGE})` }} />
       </section>
 
       <GuestJourneyFlow />

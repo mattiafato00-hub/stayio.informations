@@ -69,17 +69,10 @@ export default function OtherPage() {
           <a href="#scrivici" className="r-cta">
             Scrivici <span aria-hidden="true">→</span>
           </a>
+          <p className="r-hero-note">Ti rispondiamo entro pochi giorni.</p>
         </div>
 
-        <div className="r-hero-media" style={{ backgroundImage: `url(${HERO_IMAGE})` }}>
-          <div className="r-hero-badge">
-            <span className="r-hero-badge-pulse" aria-hidden="true" />
-            <div>
-              <strong>Parliamone</strong>
-              <span>ti rispondiamo entro pochi giorni</span>
-            </div>
-          </div>
-        </div>
+        <div className="r-hero-media" style={{ backgroundImage: `url(${HERO_IMAGE})` }} />
       </section>
 
       <section className="o-audiences" aria-label="Chi ci scrive di solito">
