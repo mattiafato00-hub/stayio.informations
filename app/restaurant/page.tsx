@@ -1,7 +1,5 @@
 "use client";
 
-import Image from "next/image";
-import Link from "next/link";
 import { FormEvent, useEffect, useRef, useState } from "react";
 
 const HERO_IMAGE =
@@ -231,13 +229,7 @@ export default function RestaurantPage() {
   }
 
   return (
-    <main className="landing restaurant">
-      <nav className="nav">
-        <Link href="/">
-          <Image src="/stayio-logo.png" alt="Stayio" width={325} height={104} style={{ width: "325px", height: "auto" }} priority />
-        </Link>
-      </nav>
-
+    <main className="restaurant">
       <section className="r-hero">
         <div className="r-hero-copy">
           <p className="eyebrow">
@@ -336,11 +328,6 @@ export default function RestaurantPage() {
           </form>
         )}
       </section>
-
-      <footer className="footer">
-        <Image src="/stayio-logo.png" alt="Stayio" width={90} height={29} style={{ width: "90px", height: "auto" }} />
-        <span>© 2026 Stayio</span>
-      </footer>
     </main>
   );
 }
