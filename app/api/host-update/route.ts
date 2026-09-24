@@ -2,6 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 import { after, NextRequest, NextResponse } from "next/server";
 
 import { sendHostNotification } from "@/lib/host-notify";
+import { keepActiveIds, MAX_RECOMMENDED_RESTAURANTS, sanitizeRecommendedIds } from "@/lib/recommended-restaurants";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
@@ -66,6 +67,29 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Il nome dell'alloggio è obbligatorio." }, { status: 400 });
     }
 
+    // Ristoranti consigliati: id non validi/duplicati/non più attivi scartati
+    // in silenzio (come le FAQ incomplete); oltre il limite → errore
+    // esplicito, verificato PRIMA di qualsiasi scrittura.
+    let recommendedIds = sanitizeRecommendedIds(body.recommendedRestaurantIds);
+    if (recommendedIds && recommendedIds.length > MAX_RECOMMENDED_RESTAURANTS) {
+      return NextResponse.json(
+        { error: `Puoi consigliare al massimo ${MAX_RECOMMENDED_RESTAURANTS} ristoranti.` },
+        { status: 400 },
+      );
+    }
+    if (recommendedIds && recommendedIds.length > 0) {
+      const { data: active, error: activeError } = await supabase
+        .from("public_restaurants")
+        .select("id")
+        .in("id", recommendedIds);
+
+      if (activeError) {
+        console.error("Errore lookup ristoranti (host-update):", activeError);
+        return NextResponse.json({ error: "Errore nel salvataggio. Riprova." }, { status: 500 });
+      }
+      recommendedIds = keepActiveIds(recommendedIds, (active ?? []).map((r) => r.id as string));
+    }
+
     const updates: Record<string, string | null> = {};
     for (const field of EDITABLE_FIELDS) {
       if (Object.prototype.hasOwnProperty.call(body, field)) {
@@ -111,6 +135,33 @@ export async function POST(request: NextRequest) {
         if (insertError) {
           console.error("Errore insert FAQ (host-update):", insertError);
           return NextResponse.json({ error: "Errore nel salvataggio delle FAQ. Riprova." }, { status: 500 });
+        }
+      }
+    }
+
+    // Ristoranti consigliati: sostituzione completa, come le FAQ.
+    if (recommendedIds) {
+      const { error: deleteError } = await supabase
+        .from("property_recommended_restaurants")
+        .delete()
+        .eq("property_id", property.id);
+
+      if (deleteError) {
+        console.error("Errore delete ristoranti consigliati (host-update):", deleteError);
+        return NextResponse.json({ error: "Errore nel salvataggio dei ristoranti. Riprova." }, { status: 500 });
+      }
+
+      if (recommendedIds.length > 0) {
+        const { error: insertError } = await supabase.from("property_recommended_restaurants").insert(
+          recommendedIds.map((activityId, index) => ({
+            property_id: property.id,
+            activity_id: activityId,
+            sort_order: index,
+          })),
+        );
+        if (insertError) {
+          console.error("Errore insert ristoranti consigliati (host-update):", insertError);
+          return NextResponse.json({ error: "Errore nel salvataggio dei ristoranti. Riprova." }, { status: 500 });
         }
       }
     }

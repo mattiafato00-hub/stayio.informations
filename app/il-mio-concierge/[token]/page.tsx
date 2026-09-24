@@ -1,6 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 
-import EditConciergeForm, { type ConciergeProperty, type FaqRow } from "./EditConciergeForm";
+import EditConciergeForm, { type ConciergeProperty, type FaqRow, type RestaurantOption } from "./EditConciergeForm";
 
 export const dynamic = "force-dynamic";
 
@@ -11,7 +11,14 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 
 async function loadProperty(
   token: string,
-): Promise<{ property: ConciergeProperty; faqs: FaqRow[]; guideVisits30d: number; hasNfcTag: boolean } | null> {
+): Promise<{
+  property: ConciergeProperty;
+  faqs: FaqRow[];
+  restaurants: RestaurantOption[];
+  recommendedIds: string[];
+  guideVisits30d: number;
+  hasNfcTag: boolean;
+} | null> {
   if (!UUID_RE.test(token)) return null;
 
   const supabase = createClient(supabaseUrl, serviceRoleKey);
@@ -31,6 +38,21 @@ async function loadProperty(
     .select("question, answer, sort_order")
     .eq("property_id", property.id)
     .order("sort_order", { ascending: true });
+
+  // Catalogo dei ristoranti partner attivi (vista: solo active, non demo)
+  // + quelli già consigliati dall'host, per pre-selezionarli.
+  const [{ data: restaurants }, { data: recommended }] = await Promise.all([
+    supabase
+      .from("public_restaurants")
+      .select("id, name, address, price_range")
+      .order("sort_order", { ascending: true })
+      .order("name", { ascending: true }),
+    supabase
+      .from("property_recommended_restaurants")
+      .select("activity_id")
+      .eq("property_id", property.id)
+      .order("sort_order", { ascending: true }),
+  ]);
 
   // Stesso dato mostrato nel dashboard con login (guide_visits) — qui
   // niente RLS da rispettare: il service role vede tutto, l'identità la
@@ -58,6 +80,8 @@ async function loadProperty(
   return {
     property: property as ConciergeProperty,
     faqs: (faqs ?? []).map((f) => ({ question: f.question ?? "", answer: f.answer ?? "" })),
+    restaurants: (restaurants ?? []) as RestaurantOption[],
+    recommendedIds: (recommended ?? []).map((r) => r.activity_id as string),
     guideVisits30d,
     hasNfcTag: Boolean(property.nfc_source_id),
   };
@@ -90,7 +114,13 @@ export default async function EditConciergePage({ params }: { params: Promise<{ 
           )}
 
           <section className="r-form-section">
-            <EditConciergeForm token={token} property={data.property} faqs={data.faqs} />
+            <EditConciergeForm
+              token={token}
+              property={data.property}
+              faqs={data.faqs}
+              restaurants={data.restaurants}
+              recommendedIds={data.recommendedIds}
+            />
           </section>
         </>
       ) : (

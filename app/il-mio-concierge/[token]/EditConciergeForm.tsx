@@ -2,6 +2,8 @@
 
 import { FormEvent, ReactNode, useId, useState } from "react";
 
+import { MAX_RECOMMENDED_RESTAURANTS } from "@/lib/recommended-restaurants";
+
 export type ConciergeProperty = {
   id: string;
   name: string | null;
@@ -24,6 +26,13 @@ export type ConciergeProperty = {
 };
 
 export type FaqRow = { question: string; answer: string };
+
+export type RestaurantOption = {
+  id: string;
+  name: string | null;
+  address: string | null;
+  price_range: string | null;
+};
 
 type Status = "idle" | "saving" | "saved" | "error";
 
@@ -70,6 +79,11 @@ const iconCar = (
     <path d="M5 13l1.5-4.5A2 2 0 0 1 8.4 7h7.2a2 2 0 0 1 1.9 1.5L19 13m-14 0h14m-14 0v4m14-4v4M7 17h.01M17 17h.01M5 17h14v.5a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 5 17.5V17Z" />
   </svg>
 );
+const iconFork = (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M7 3v8M4.5 3v5a2.5 2.5 0 0 0 5 0V3M7 11v10M17 21V3c-2.2 1.2-3.5 3.6-3.5 7v3H17" />
+  </svg>
+);
 const iconTrash = (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
     <path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M6 7l1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13M10 11v6M14 11v6" />
@@ -82,6 +96,77 @@ const iconChevron = (
 );
 
 const hasValue = (v: string | null | undefined) => typeof v === "string" && v.trim().length > 0;
+
+/**
+ * Selettore dei ristoranti partner consigliati dall'host: checkbox con
+ * contatore, oltre il limite le voci non scelte vengono disabilitate
+ * (mai selezionate e poi bloccate). Le checkbox non hanno `name`: gli id
+ * viaggiano nel payload dallo stato React, come le FAQ.
+ */
+function RestaurantPicker({
+  restaurants,
+  selected,
+  onToggle,
+}: {
+  restaurants: RestaurantOption[];
+  selected: string[];
+  onToggle: (id: string) => void;
+}) {
+  const [limitHit, setLimitHit] = useState(false);
+  const full = selected.length >= MAX_RECOMMENDED_RESTAURANTS;
+
+  if (restaurants.length === 0) {
+    return (
+      <p className="h-rest-empty" role="status">
+        Al momento non ci sono ristoranti partner attivi da consigliare. Appena ne aggiungiamo, li troverai qui.
+      </p>
+    );
+  }
+
+  return (
+    <>
+      <p className={`h-rest-count${full ? " is-full" : ""}`} aria-live="polite">
+        {selected.length}/{MAX_RECOMMENDED_RESTAURANTS} selezionati
+      </p>
+      <ul className="h-rest-list">
+        {restaurants.map((r) => {
+          const checked = selected.includes(r.id);
+          const disabled = !checked && full;
+          return (
+            <li key={r.id}>
+              <label
+                className={`h-rest-item${checked ? " is-checked" : ""}${disabled ? " is-disabled" : ""}`}
+                onClick={() => disabled && setLimitHit(true)}
+              >
+                <input
+                  type="checkbox"
+                  checked={checked}
+                  disabled={disabled}
+                  onChange={() => {
+                    setLimitHit(false);
+                    onToggle(r.id);
+                  }}
+                />
+                <span className="h-rest-text">
+                  <span className="h-rest-name">
+                    {r.name || "Ristorante"}
+                    {r.price_range && <span className="h-rest-price"> · {r.price_range}</span>}
+                  </span>
+                  {r.address && <span className="h-rest-address">{r.address}</span>}
+                </span>
+              </label>
+            </li>
+          );
+        })}
+      </ul>
+      {full && (
+        <p className={`h-rest-limit${limitHit ? " is-alert" : ""}`} role={limitHit ? "alert" : undefined}>
+          Hai già scelto {MAX_RECOMMENDED_RESTAURANTS} ristoranti, il massimo. Per sceglierne un altro, togline prima uno.
+        </p>
+      )}
+    </>
+  );
+}
 
 /**
  * Sezione collassabile del form di modifica. I campi restano SEMPRE
@@ -136,11 +221,19 @@ export default function EditConciergeForm({
   token,
   property,
   faqs: initialFaqs,
+  restaurants,
+  recommendedIds,
 }: {
   token: string;
   property: ConciergeProperty;
   faqs: FaqRow[];
+  restaurants: RestaurantOption[];
+  recommendedIds: string[];
 }) {
+  // Pre-selezione: solo i consigliati ancora presenti nel catalogo attivo.
+  const [selectedRestaurants, setSelectedRestaurants] = useState<string[]>(() =>
+    recommendedIds.filter((id) => restaurants.some((r) => r.id === id)).slice(0, MAX_RECOMMENDED_RESTAURANTS),
+  );
   const [faqs, setFaqs] = useState<FaqRow[]>(initialFaqs.length > 0 ? initialFaqs : [{ question: "", answer: "" }]);
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
@@ -155,6 +248,13 @@ export default function EditConciergeForm({
 
   function updateFaq(index: number, key: keyof FaqRow, value: string) {
     setFaqs((rows) => rows.map((row, i) => (i === index ? { ...row, [key]: value } : row)));
+  }
+
+  function toggleRestaurant(id: string) {
+    setSelectedRestaurants((ids) => {
+      if (ids.includes(id)) return ids.filter((x) => x !== id);
+      return ids.length >= MAX_RECOMMENDED_RESTAURANTS ? ids : [...ids, id];
+    });
   }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -181,6 +281,7 @@ export default function EditConciergeForm({
       host_whatsapp: data.get("host_whatsapp"),
       custom_instructions: data.get("custom_instructions"),
       faqs: faqs.filter((f) => f.question.trim() && f.answer.trim()),
+      recommendedRestaurantIds: selectedRestaurants,
     };
 
     try {
@@ -306,6 +407,14 @@ export default function EditConciergeForm({
             <textarea id="waste_info" name="waste_info" rows={2} defaultValue={property.waste_info ?? ""} placeholder="Es. i bidoni sono in cortile; umido lunedì e giovedì, plastica il mercoledì, sacchetti sotto il lavello; il vetro nella campana all&apos;angolo." />
           </div>
         </div>
+      </AccordionSection>
+
+      <AccordionSection icon={iconFork} title="Ristoranti che consigli" filled={selectedRestaurants.length > 0}>
+        <p className="h-hint">
+          Scegli fino a {MAX_RECOMMENDED_RESTAURANTS} ristoranti partner di Stayio da consigliare ai tuoi ospiti: li vedranno come
+          tuoi suggerimenti personali.
+        </p>
+        <RestaurantPicker restaurants={restaurants} selected={selectedRestaurants} onToggle={toggleRestaurant} />
       </AccordionSection>
 
       <AccordionSection

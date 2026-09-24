@@ -1102,6 +1102,112 @@ footer .wordmark { color: #fff; }
   border-color: var(--accent-bright);
 }
 
+/* Ristoranti consigliati — checkbox con contatore e limite */
+.host .h-rest-count {
+  font-family: var(--font-inter), "Inter", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: #f1d9db;
+  margin: 0 0 10px;
+}
+
+.host .h-rest-count.is-full {
+  color: var(--accent-bright);
+}
+
+.host .h-rest-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.host .h-rest-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.host .h-rest-item:hover {
+  border-color: rgba(255, 138, 147, 0.5);
+}
+
+.host .h-rest-item.is-checked {
+  border-color: var(--accent-bright);
+  background: rgba(200, 29, 58, 0.12);
+}
+
+.host .h-rest-item.is-disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.host .h-rest-item.is-disabled:hover {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.host .h-rest-item input {
+  width: 18px;
+  height: 18px;
+  margin: 1px 0 0;
+  flex-shrink: 0;
+  accent-color: var(--accent-bright);
+  cursor: inherit;
+}
+
+.host .h-rest-text {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.host .h-rest-name {
+  font-family: var(--font-manrope), "Manrope", sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.host .h-rest-price {
+  font-weight: 600;
+  color: #c9a9ac;
+}
+
+.host .h-rest-address {
+  font-family: var(--font-inter), "Inter", sans-serif;
+  font-size: 12px;
+  line-height: 1.4;
+  color: #c9a9ac;
+}
+
+.host .h-rest-limit,
+.host .h-rest-empty {
+  font-family: var(--font-inter), "Inter", sans-serif;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #c9a9ac;
+  margin: 12px 0 0;
+}
+
+.host .h-rest-empty {
+  margin: 0;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px dashed rgba(255, 255, 255, 0.18);
+}
+
+.host .h-rest-limit.is-alert {
+  color: var(--accent-bright);
+  font-weight: 700;
+}
+
 /* Success — WhatsApp action */
 .host .h-wa {
   display: inline-flex;
