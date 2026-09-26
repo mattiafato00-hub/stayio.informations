@@ -2,6 +2,8 @@
 
 import { FormEvent, useEffect, useRef, useState } from "react";
 
+import Honeypot from "@/components/Honeypot";
+import { HONEYPOT_FIELD } from "@/lib/antispam";
 import { LEAD_FIELD_LIMITS } from "@/lib/validation";
 
 const HERO_IMAGE =
@@ -206,6 +208,7 @@ export default function HostPage() {
       // un solo campo di contatto: lo salviamo sia come telefono che come WhatsApp
       host_phone: phone,
       host_whatsapp: phone,
+      [HONEYPOT_FIELD]: data.get(HONEYPOT_FIELD),
     };
 
     try {
@@ -282,6 +285,7 @@ export default function HostPage() {
           <>
             <p className="h-form-note">Bastano 30 secondi — potrai aggiungere tutti i dettagli quando vuoi.</p>
             <form className="r-form" onSubmit={handleSubmit}>
+              <Honeypot />
               <div className="r-field r-field-full">
                 <label htmlFor="name">Nome dell&apos;alloggio *</label>
                 <input id="name" name="name" type="text" required maxLength={LEAD_FIELD_LIMITS.name} autoComplete="organization" />

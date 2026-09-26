@@ -1,6 +1,8 @@
 import { after, NextRequest, NextResponse } from "next/server";
 
+import { isHoneypotFilled } from "@/lib/antispam";
 import { sendHostNotification } from "@/lib/host-notify";
+import { checkRateLimit, RATE_LIMITS, TOO_MANY_REQUESTS_MESSAGE } from "@/lib/rate-limit";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import {
   LEAD_FIELD_LIMITS,
@@ -28,6 +30,19 @@ import {
 export async function POST(request: NextRequest) {
   try {
     const body = await readJsonObject(request, MAX_BODY_BYTES.lead);
+
+    if (isHoneypotFilled(body)) {
+      console.warn("[host-signup] honeypot compilato: richiesta scartata.");
+      return NextResponse.json({ success: true });
+    }
+
+    const rateLimit = await checkRateLimit(request.headers, RATE_LIMITS.hostSignup);
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        { error: TOO_MANY_REQUESTS_MESSAGE },
+        { status: 429, headers: { "Retry-After": String(rateLimit.retryAfterSeconds) } },
+      );
+    }
 
     const name = requiredText(body, "name", LEAD_FIELD_LIMITS.name, "Il nome dell'alloggio");
     const email = requiredEmail(body);

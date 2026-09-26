@@ -1,6 +1,7 @@
 import { after, NextRequest, NextResponse } from "next/server";
 
 import { sendHostNotification } from "@/lib/host-notify";
+import { checkRateLimit, RATE_LIMITS, TOO_MANY_REQUESTS_MESSAGE } from "@/lib/rate-limit";
 import { keepActiveIds, MAX_RECOMMENDED_RESTAURANTS, sanitizeRecommendedIds } from "@/lib/recommended-restaurants";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import {
@@ -41,6 +42,14 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 export async function POST(request: NextRequest) {
   try {
     const body = await readJsonObject(request, MAX_BODY_BYTES.hostUpdate);
+
+    const rateLimit = await checkRateLimit(request.headers, RATE_LIMITS.hostUpdate);
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        { error: TOO_MANY_REQUESTS_MESSAGE },
+        { status: 429, headers: { "Retry-After": String(rateLimit.retryAfterSeconds) } },
+      );
+    }
 
     const token = typeof body.token === "string" ? body.token.trim() : "";
     if (!UUID_RE.test(token)) {

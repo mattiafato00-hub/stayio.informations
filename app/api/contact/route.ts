@@ -1,5 +1,7 @@
 import nodemailer from "nodemailer";
 import { NextResponse } from "next/server";
+import { isHoneypotFilled } from "@/lib/antispam";
+import { checkRateLimit, RATE_LIMITS, TOO_MANY_REQUESTS_MESSAGE } from "@/lib/rate-limit";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import {
   LEAD_FIELD_LIMITS,
@@ -17,6 +19,20 @@ const recipient = "stayio267@gmail.com";
 export async function POST(request: Request) {
   try {
     const body = await readJsonObject(request, MAX_BODY_BYTES.lead);
+
+    if (isHoneypotFilled(body)) {
+      console.warn("[contact] honeypot compilato: richiesta scartata.");
+      return NextResponse.json({ success: true });
+    }
+
+    const rateLimit = await checkRateLimit(request.headers, RATE_LIMITS.contact);
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        { error: TOO_MANY_REQUESTS_MESSAGE },
+        { status: 429, headers: { "Retry-After": String(rateLimit.retryAfterSeconds) } },
+      );
+    }
+
     const name = requiredText(body, "name", LEAD_FIELD_LIMITS.name, "Il nome");
     const email = requiredEmail(body);
     const role = requiredText(body, "role", LEAD_FIELD_LIMITS.role, "Il tipo di attività");

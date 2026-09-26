@@ -2,6 +2,8 @@
 
 import { FormEvent, useEffect, useRef, useState } from "react";
 
+import Honeypot from "@/components/Honeypot";
+import { HONEYPOT_FIELD } from "@/lib/antispam";
 import { LEAD_FIELD_LIMITS, MAX_SEATS } from "@/lib/validation";
 
 const HERO_IMAGE =
@@ -207,6 +209,7 @@ export default function RestaurantPage() {
       phone: data.get("phone"),
       seats: data.get("seats"),
       message: data.get("message"),
+      [HONEYPOT_FIELD]: data.get(HONEYPOT_FIELD),
     };
 
     try {
@@ -278,6 +281,7 @@ export default function RestaurantPage() {
           </div>
         ) : (
           <form className="r-form" onSubmit={handleSubmit}>
+            <Honeypot />
             <div className="r-field">
               <label htmlFor="venueName">Nome del locale *</label>
               <input id="venueName" name="venueName" type="text" required maxLength={LEAD_FIELD_LIMITS.venueName} autoComplete="organization" />

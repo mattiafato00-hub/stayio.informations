@@ -2,6 +2,8 @@
 
 import { FormEvent, useState } from "react";
 
+import Honeypot from "@/components/Honeypot";
+import { HONEYPOT_FIELD } from "@/lib/antispam";
 import { LEAD_FIELD_LIMITS } from "@/lib/validation";
 
 const HERO_IMAGE =
@@ -34,6 +36,7 @@ export default function OtherPage() {
       name: data.get("name"),
       email: data.get("email"),
       message: data.get("message"),
+      [HONEYPOT_FIELD]: data.get(HONEYPOT_FIELD),
     };
 
     try {
@@ -103,6 +106,7 @@ export default function OtherPage() {
           </div>
         ) : (
           <form className="r-form" onSubmit={handleSubmit}>
+            <Honeypot />
             <div className="r-field">
               <label htmlFor="name">Nome *</label>
               <input id="name" name="name" type="text" required maxLength={LEAD_FIELD_LIMITS.name} autoComplete="name" />
