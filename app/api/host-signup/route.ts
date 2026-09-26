@@ -1,12 +1,7 @@
-import { createClient } from "@supabase/supabase-js";
 import { after, NextRequest, NextResponse } from "next/server";
 
 import { sendHostNotification } from "@/lib/host-notify";
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-
-const supabase = createClient(supabaseUrl, serviceRoleKey);
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
 
 /**
  * Prima creava subito una property_details reale, senza nessun
@@ -44,6 +39,7 @@ export async function POST(request: NextRequest) {
     if (phone) messageLines.push(`Telefono: ${phone}`);
     if (whatsapp && whatsapp !== phone) messageLines.push(`WhatsApp: ${whatsapp}`);
 
+    const supabase = getSupabaseAdmin();
     const { error: leadError } = await supabase.from("leads").insert({
       name: trimmedName,
       email: trimmedEmail,

@@ -1,11 +1,8 @@
-import { createClient } from "@supabase/supabase-js";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
 
 import EditConciergeForm, { type ConciergeProperty, type FaqRow, type RestaurantOption } from "./EditConciergeForm";
 
 export const dynamic = "force-dynamic";
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -21,7 +18,7 @@ async function loadProperty(
 } | null> {
   if (!UUID_RE.test(token)) return null;
 
-  const supabase = createClient(supabaseUrl, serviceRoleKey);
+  const supabase = getSupabaseAdmin();
 
   const { data: property, error } = await supabase
     .from("property_details")

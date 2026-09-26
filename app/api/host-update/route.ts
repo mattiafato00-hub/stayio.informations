@@ -1,13 +1,8 @@
-import { createClient } from "@supabase/supabase-js";
 import { after, NextRequest, NextResponse } from "next/server";
 
 import { sendHostNotification } from "@/lib/host-notify";
 import { keepActiveIds, MAX_RECOMMENDED_RESTAURANTS, sanitizeRecommendedIds } from "@/lib/recommended-restaurants";
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-
-const supabase = createClient(supabaseUrl, serviceRoleKey);
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
 
 // Campi testuali di property_details modificabili dall'host tramite il link personale.
 const EDITABLE_FIELDS = [
@@ -45,6 +40,8 @@ export async function POST(request: NextRequest) {
     if (!UUID_RE.test(token)) {
       return NextResponse.json({ error: "Link non valido." }, { status: 400 });
     }
+
+    const supabase = getSupabaseAdmin();
 
     // Verifica che il link corrisponda a una property esistente.
     const { data: property, error: lookupError } = await supabase
