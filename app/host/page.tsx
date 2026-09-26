@@ -2,6 +2,8 @@
 
 import { FormEvent, useEffect, useRef, useState } from "react";
 
+import { LEAD_FIELD_LIMITS } from "@/lib/validation";
+
 const HERO_IMAGE =
   "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1200&q=80";
 
@@ -282,15 +284,15 @@ export default function HostPage() {
             <form className="r-form" onSubmit={handleSubmit}>
               <div className="r-field r-field-full">
                 <label htmlFor="name">Nome dell&apos;alloggio *</label>
-                <input id="name" name="name" type="text" required autoComplete="organization" />
+                <input id="name" name="name" type="text" required maxLength={LEAD_FIELD_LIMITS.name} autoComplete="organization" />
               </div>
               <div className="r-field">
                 <label htmlFor="email">Email *</label>
-                <input id="email" name="email" type="email" required autoComplete="email" />
+                <input id="email" name="email" type="email" required maxLength={LEAD_FIELD_LIMITS.email} autoComplete="email" />
               </div>
               <div className="r-field">
                 <label htmlFor="phone">Telefono / WhatsApp *</label>
-                <input id="phone" name="phone" type="tel" required autoComplete="tel" />
+                <input id="phone" name="phone" type="tel" required maxLength={LEAD_FIELD_LIMITS.phone} autoComplete="tel" />
               </div>
 
               {status === "error" && <p className="r-form-error">{error}</p>}

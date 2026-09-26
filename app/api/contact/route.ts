@@ -1,29 +1,39 @@
 import nodemailer from "nodemailer";
 import { NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
+import {
+  LEAD_FIELD_LIMITS,
+  MAX_BODY_BYTES,
+  optionalSeats,
+  optionalText,
+  readJsonObject,
+  requiredEmail,
+  requiredText,
+  ValidationError,
+} from "@/lib/validation";
 
 const recipient = "stayio267@gmail.com";
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
-    const name = typeof body.name === "string" ? body.name.trim() : "";
-    const email = typeof body.email === "string" ? body.email.trim() : "";
-    const role = typeof body.role === "string" ? body.role.trim() : "";
-    const message = typeof body.message === "string" ? body.message.trim() : "";
+    const body = await readJsonObject(request, MAX_BODY_BYTES.lead);
+    const name = requiredText(body, "name", LEAD_FIELD_LIMITS.name, "Il nome");
+    const email = requiredEmail(body);
+    const role = requiredText(body, "role", LEAD_FIELD_LIMITS.role, "Il tipo di attività");
+    const message = optionalText(body, "message", LEAD_FIELD_LIMITS.message, "Messaggio") ?? "";
 
-    // Campi aggiuntivi per lead qualificati (es. form ristoranti) — tutti facoltativi.
-    const venueName = typeof body.venueName === "string" ? body.venueName.trim() : "";
-    const city = typeof body.city === "string" ? body.city.trim() : "";
-    const phone = typeof body.phone === "string" ? body.phone.trim() : "";
-    const seats =
-      typeof body.seats === "string" || typeof body.seats === "number"
-        ? String(body.seats).trim()
-        : "";
-
-    if (!name || !email || !role) {
-      return NextResponse.json({ error: "Please complete the required fields." }, { status: 400 });
-    }
+    // Campi aggiuntivi per lead qualificati (form ristoranti). Nome del
+    // locale e città sono obbligatori per i ristoratori, anche lato server.
+    const isRestaurant = role === "Ristoratore";
+    const venueName = isRestaurant
+      ? requiredText(body, "venueName", LEAD_FIELD_LIMITS.venueName, "Il nome del locale")
+      : (optionalText(body, "venueName", LEAD_FIELD_LIMITS.venueName, "Nome del locale") ?? "");
+    const city = isRestaurant
+      ? requiredText(body, "city", LEAD_FIELD_LIMITS.city, "Il campo Città / zona")
+      : (optionalText(body, "city", LEAD_FIELD_LIMITS.city, "Città / zona") ?? "");
+    const phone = optionalText(body, "phone", LEAD_FIELD_LIMITS.phone, "Telefono") ?? "";
+    const seatsNumber = optionalSeats(body);
+    const seats = seatsNumber === null ? "" : String(seatsNumber);
 
     const extraLines: string[] = [];
     if (venueName) extraLines.push(`Venue: ${venueName}`);
@@ -74,6 +84,9 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true });
   } catch (err) {
+    if (err instanceof ValidationError) {
+      return NextResponse.json({ error: err.message }, { status: err.status });
+    }
     console.error("[contact] Errore:", err);
     return NextResponse.json({ error: "We could not send your message. Please try again." }, { status: 500 });
   }

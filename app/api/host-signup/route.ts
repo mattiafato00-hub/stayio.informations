@@ -2,6 +2,15 @@ import { after, NextRequest, NextResponse } from "next/server";
 
 import { sendHostNotification } from "@/lib/host-notify";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
+import {
+  LEAD_FIELD_LIMITS,
+  MAX_BODY_BYTES,
+  optionalText,
+  readJsonObject,
+  requiredEmail,
+  requiredText,
+  ValidationError,
+} from "@/lib/validation";
 
 /**
  * Prima creava subito una property_details reale, senza nessun
@@ -18,22 +27,12 @@ import { getSupabaseAdmin } from "@/lib/supabase-admin";
  */
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    const body = await readJsonObject(request, MAX_BODY_BYTES.lead);
 
-    const { name, email, host_phone, host_whatsapp } = body;
-
-    if (!name || typeof name !== "string" || !name.trim()) {
-      return NextResponse.json({ error: "Il nome dell'alloggio è obbligatorio." }, { status: 400 });
-    }
-
-    if (!email || typeof email !== "string" || !email.includes("@")) {
-      return NextResponse.json({ error: "Inserisci un'email valida." }, { status: 400 });
-    }
-
-    const trimmedName = name.trim();
-    const trimmedEmail = email.trim();
-    const phone = typeof host_phone === "string" ? host_phone.trim() : "";
-    const whatsapp = typeof host_whatsapp === "string" ? host_whatsapp.trim() : "";
+    const name = requiredText(body, "name", LEAD_FIELD_LIMITS.name, "Il nome dell'alloggio");
+    const email = requiredEmail(body);
+    const phone = optionalText(body, "host_phone", LEAD_FIELD_LIMITS.phone, "Telefono") ?? "";
+    const whatsapp = optionalText(body, "host_whatsapp", LEAD_FIELD_LIMITS.phone, "WhatsApp") ?? "";
 
     const messageLines: string[] = [];
     if (phone) messageLines.push(`Telefono: ${phone}`);
@@ -41,8 +40,8 @@ export async function POST(request: NextRequest) {
 
     const supabase = getSupabaseAdmin();
     const { error: leadError } = await supabase.from("leads").insert({
-      name: trimmedName,
-      email: trimmedEmail,
+      name,
+      email,
       role: "host-signup",
       message: messageLines.join("\n") || null,
     });
@@ -52,7 +51,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Errore nel salvataggio dei dati. Riprova." }, { status: 500 });
     }
 
-    console.log(`Nuova richiesta host salvata in leads: ${trimmedName} <${trimmedEmail}>`);
+    console.log(`Nuova richiesta host salvata in leads: ${name} <${email}>`);
 
     // Notifica email a Stayio, eseguita dopo la risposta (after): non aggiunge
     // latenza e un eventuale errore non tocca la risposta di successo.
@@ -60,8 +59,8 @@ export async function POST(request: NextRequest) {
       sendHostNotification({
         kind: "signup",
         propertyId: null,
-        name: trimmedName,
-        email: trimmedEmail,
+        name,
+        email,
         phone: phone || null,
         whatsapp: whatsapp || null,
       }),
@@ -69,6 +68,9 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (err) {
+    if (err instanceof ValidationError) {
+      return NextResponse.json({ error: err.message }, { status: err.status });
+    }
     console.error("Errore host-signup:", err);
     return NextResponse.json({ error: "Errore imprevisto. Riprova più tardi." }, { status: 500 });
   }
