@@ -74,7 +74,7 @@ export async function POST(request: Request) {
     }
 
     if (!process.env.GMAIL_APP_PASSWORD || !process.env.GMAIL_USER) {
-      return NextResponse.json({ error: "Email delivery is not configured yet." }, { status: 503 });
+      return NextResponse.json({ error: "Invio non disponibile al momento. Riprova più tardi." }, { status: 503 });
     }
 
     const transporter = nodemailer.createTransport({
@@ -104,6 +104,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: err.message }, { status: err.status });
     }
     console.error("[contact] Errore:", err);
-    return NextResponse.json({ error: "We could not send your message. Please try again." }, { status: 500 });
+    return NextResponse.json({ error: "Non siamo riusciti a inviare la richiesta. Riprova." }, { status: 500 });
   }
 }

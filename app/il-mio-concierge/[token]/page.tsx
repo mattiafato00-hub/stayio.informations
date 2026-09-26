@@ -1,8 +1,19 @@
+import type { Metadata } from "next";
+
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 
 import EditConciergeForm, { type ConciergeProperty, type FaqRow, type RestaurantOption } from "./EditConciergeForm";
 
 export const dynamic = "force-dynamic";
+
+// Pagina privata (possesso del link = accesso): mai indicizzata. Anche
+// l'header X-Robots-Tag in next.config.ts copre questo percorso.
+export const metadata: Metadata = {
+  title: "Il tuo concierge | Stayio",
+  robots: { index: false, follow: false, nocache: true },
+  openGraph: null,
+  twitter: null,
+};
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
