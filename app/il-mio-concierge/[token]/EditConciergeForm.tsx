@@ -2,6 +2,7 @@
 
 import { FormEvent, ReactNode, useId, useState } from "react";
 
+import PrivacyNote from "@/components/PrivacyNote";
 import { MAX_RECOMMENDED_RESTAURANTS } from "@/lib/recommended-restaurants";
 import { FAQ_LIMITS, PROPERTY_FIELD_LIMITS as LIMITS } from "@/lib/validation";
 
@@ -490,6 +491,7 @@ export default function EditConciergeForm({
       <button type="submit" className="r-submit" disabled={status === "saving"}>
         {status === "saving" ? "Salvataggio…" : "Salva le informazioni"}
       </button>
+      <PrivacyNote />
 
       {status === "saved" && <p className="h-edit-saved" role="status">Salvato ✓</p>}
     </form>

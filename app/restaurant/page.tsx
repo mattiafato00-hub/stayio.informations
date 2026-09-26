@@ -3,11 +3,12 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
 
 import Honeypot from "@/components/Honeypot";
+import PrivacyNote from "@/components/PrivacyNote";
 import { HONEYPOT_FIELD } from "@/lib/antispam";
 import { LEAD_FIELD_LIMITS, MAX_SEATS } from "@/lib/validation";
 
 const HERO_IMAGE =
-  "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1200&q=80";
+  "/images/restaurant-1200.webp";
 
 // --- Percorso dell'ospite: dal check-in al tavolo del ristorante ---
 // Nota: la parola "NFC" non compare mai in questo racconto — per il
@@ -322,6 +323,7 @@ export default function RestaurantPage() {
             <button type="submit" className="r-submit" disabled={status === "sending"}>
               {status === "sending" ? "Invio in corso…" : "Invia richiesta"}
             </button>
+            <PrivacyNote />
           </form>
         )}
       </section>

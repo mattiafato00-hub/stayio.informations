@@ -8,6 +8,7 @@ const PAGES: { path: string; priority: number }[] = [
   { path: "/host", priority: 0.9 },
   { path: "/restaurant", priority: 0.9 },
   { path: "/other", priority: 0.6 },
+  { path: "/privacy", priority: 0.3 },
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {

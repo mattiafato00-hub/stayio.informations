@@ -3,11 +3,12 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
 
 import Honeypot from "@/components/Honeypot";
+import PrivacyNote from "@/components/PrivacyNote";
 import { HONEYPOT_FIELD } from "@/lib/antispam";
 import { LEAD_FIELD_LIMITS } from "@/lib/validation";
 
 const HERO_IMAGE =
-  "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1200&q=80";
+  "/images/host-1200.webp";
 
 const benefits = [
   {
@@ -304,6 +305,7 @@ export default function HostPage() {
               <button type="submit" className="r-submit" disabled={status === "sending"}>
                 {status === "sending" ? "Attivazione in corso…" : "Attiva il concierge gratuito"}
               </button>
+              <PrivacyNote />
             </form>
           </>
         )}

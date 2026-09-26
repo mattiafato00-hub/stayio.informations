@@ -3,11 +3,12 @@
 import { FormEvent, useState } from "react";
 
 import Honeypot from "@/components/Honeypot";
+import PrivacyNote from "@/components/PrivacyNote";
 import { HONEYPOT_FIELD } from "@/lib/antispam";
 import { LEAD_FIELD_LIMITS } from "@/lib/validation";
 
 const HERO_IMAGE =
-  "https://images.unsplash.com/photo-1531973576160-7125cd663d86?auto=format&fit=crop&w=1200&q=80";
+  "/images/other-1200.webp";
 
 const roleOptions = ["Bar", "Beach club", "Esperienze/eventi", "Investitore", "Altro"];
 
@@ -141,6 +142,7 @@ export default function OtherPage() {
             <button type="submit" className="r-submit" disabled={status === "sending"}>
               {status === "sending" ? "Invio in corso…" : "Invia messaggio"}
             </button>
+            <PrivacyNote />
           </form>
         )}
       </section>
