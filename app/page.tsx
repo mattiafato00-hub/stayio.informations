@@ -7,19 +7,19 @@ const categories = [
     href: "/host",
     title: "Ho un B&B",
     text: "Un concierge digitale per i tuoi ospiti, gratuito.",
-    image: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=80",
+    image: "/images/host-800.webp",
   },
   {
     href: "/restaurant",
     title: "Ho un ristorante",
     text: "Fatti trovare da chi è già in zona.",
-    image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&q=80",
+    image: "/images/restaurant-800.webp",
   },
   {
     href: "/other",
     title: "Altro",
     text: "Bar, esperienze, eventi, investitori — parliamone.",
-    image: "https://images.unsplash.com/photo-1531973576160-7125cd663d86?auto=format&fit=crop&w=800&q=80",
+    image: "/images/other-800.webp",
   },
 ];
 

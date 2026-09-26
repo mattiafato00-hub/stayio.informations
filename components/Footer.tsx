@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Footer() {
   return (
@@ -10,7 +11,11 @@ export default function Footer() {
         height={29}
         style={{ width: "90px", height: "auto" }}
       />
-      <span>© 2026 Stayio</span>
+      <span className="footer-meta">
+        <Link href="/privacy">Privacy</Link>
+        <span aria-hidden="true">·</span>
+        <span>© 2026 Stayio</span>
+      </span>
     </footer>
   );
 }

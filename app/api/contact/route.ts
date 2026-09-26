@@ -1,29 +1,55 @@
 import nodemailer from "nodemailer";
 import { NextResponse } from "next/server";
+import { isHoneypotFilled } from "@/lib/antispam";
+import { checkRateLimit, RATE_LIMITS, TOO_MANY_REQUESTS_MESSAGE } from "@/lib/rate-limit";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
+import {
+  LEAD_FIELD_LIMITS,
+  MAX_BODY_BYTES,
+  optionalSeats,
+  optionalText,
+  readJsonObject,
+  requiredEmail,
+  requiredText,
+  ValidationError,
+} from "@/lib/validation";
 
 const recipient = "stayio267@gmail.com";
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
-    const name = typeof body.name === "string" ? body.name.trim() : "";
-    const email = typeof body.email === "string" ? body.email.trim() : "";
-    const role = typeof body.role === "string" ? body.role.trim() : "";
-    const message = typeof body.message === "string" ? body.message.trim() : "";
+    const body = await readJsonObject(request, MAX_BODY_BYTES.lead);
 
-    // Campi aggiuntivi per lead qualificati (es. form ristoranti) — tutti facoltativi.
-    const venueName = typeof body.venueName === "string" ? body.venueName.trim() : "";
-    const city = typeof body.city === "string" ? body.city.trim() : "";
-    const phone = typeof body.phone === "string" ? body.phone.trim() : "";
-    const seats =
-      typeof body.seats === "string" || typeof body.seats === "number"
-        ? String(body.seats).trim()
-        : "";
-
-    if (!name || !email || !role) {
-      return NextResponse.json({ error: "Please complete the required fields." }, { status: 400 });
+    if (isHoneypotFilled(body)) {
+      console.warn("[contact] honeypot compilato: richiesta scartata.");
+      return NextResponse.json({ success: true });
     }
+
+    const rateLimit = await checkRateLimit(request.headers, RATE_LIMITS.contact);
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        { error: TOO_MANY_REQUESTS_MESSAGE },
+        { status: 429, headers: { "Retry-After": String(rateLimit.retryAfterSeconds) } },
+      );
+    }
+
+    const name = requiredText(body, "name", LEAD_FIELD_LIMITS.name, "Il nome");
+    const email = requiredEmail(body);
+    const role = requiredText(body, "role", LEAD_FIELD_LIMITS.role, "Il tipo di attività");
+    const message = optionalText(body, "message", LEAD_FIELD_LIMITS.message, "Messaggio") ?? "";
+
+    // Campi aggiuntivi per lead qualificati (form ristoranti). Nome del
+    // locale e città sono obbligatori per i ristoratori, anche lato server.
+    const isRestaurant = role === "Ristoratore";
+    const venueName = isRestaurant
+      ? requiredText(body, "venueName", LEAD_FIELD_LIMITS.venueName, "Il nome del locale")
+      : (optionalText(body, "venueName", LEAD_FIELD_LIMITS.venueName, "Nome del locale") ?? "");
+    const city = isRestaurant
+      ? requiredText(body, "city", LEAD_FIELD_LIMITS.city, "Il campo Città / zona")
+      : (optionalText(body, "city", LEAD_FIELD_LIMITS.city, "Città / zona") ?? "");
+    const phone = optionalText(body, "phone", LEAD_FIELD_LIMITS.phone, "Telefono") ?? "";
+    const seatsNumber = optionalSeats(body);
+    const seats = seatsNumber === null ? "" : String(seatsNumber);
 
     const extraLines: string[] = [];
     if (venueName) extraLines.push(`Venue: ${venueName}`);
@@ -48,7 +74,7 @@ export async function POST(request: Request) {
     }
 
     if (!process.env.GMAIL_APP_PASSWORD || !process.env.GMAIL_USER) {
-      return NextResponse.json({ error: "Email delivery is not configured yet." }, { status: 503 });
+      return NextResponse.json({ error: "Invio non disponibile al momento. Riprova più tardi." }, { status: 503 });
     }
 
     const transporter = nodemailer.createTransport({
@@ -74,7 +100,10 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true });
   } catch (err) {
+    if (err instanceof ValidationError) {
+      return NextResponse.json({ error: err.message }, { status: err.status });
+    }
     console.error("[contact] Errore:", err);
-    return NextResponse.json({ error: "We could not send your message. Please try again." }, { status: 500 });
+    return NextResponse.json({ error: "Non siamo riusciti a inviare la richiesta. Riprova." }, { status: 500 });
   }
 }

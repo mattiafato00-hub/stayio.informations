@@ -2,8 +2,13 @@
 
 import { FormEvent, useEffect, useRef, useState } from "react";
 
+import Honeypot from "@/components/Honeypot";
+import PrivacyNote from "@/components/PrivacyNote";
+import { HONEYPOT_FIELD } from "@/lib/antispam";
+import { LEAD_FIELD_LIMITS, MAX_SEATS } from "@/lib/validation";
+
 const HERO_IMAGE =
-  "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1200&q=80";
+  "/images/restaurant-1200.webp";
 
 // --- Percorso dell'ospite: dal check-in al tavolo del ristorante ---
 // Nota: la parola "NFC" non compare mai in questo racconto — per il
@@ -205,6 +210,7 @@ export default function RestaurantPage() {
       phone: data.get("phone"),
       seats: data.get("seats"),
       message: data.get("message"),
+      [HONEYPOT_FIELD]: data.get(HONEYPOT_FIELD),
     };
 
     try {
@@ -276,39 +282,40 @@ export default function RestaurantPage() {
           </div>
         ) : (
           <form className="r-form" onSubmit={handleSubmit}>
+            <Honeypot />
             <div className="r-field">
               <label htmlFor="venueName">Nome del locale *</label>
-              <input id="venueName" name="venueName" type="text" required autoComplete="organization" />
+              <input id="venueName" name="venueName" type="text" required maxLength={LEAD_FIELD_LIMITS.venueName} autoComplete="organization" />
             </div>
 
             <div className="r-field">
               <label htmlFor="city">Città / zona *</label>
-              <input id="city" name="city" type="text" required autoComplete="address-level2" />
+              <input id="city" name="city" type="text" required maxLength={LEAD_FIELD_LIMITS.city} autoComplete="address-level2" />
             </div>
 
             <div className="r-field">
               <label htmlFor="name">Nome e cognome del referente *</label>
-              <input id="name" name="name" type="text" required autoComplete="name" />
+              <input id="name" name="name" type="text" required maxLength={LEAD_FIELD_LIMITS.name} autoComplete="name" />
             </div>
 
             <div className="r-field">
               <label htmlFor="email">Email *</label>
-              <input id="email" name="email" type="email" required autoComplete="email" />
+              <input id="email" name="email" type="email" required maxLength={LEAD_FIELD_LIMITS.email} autoComplete="email" />
             </div>
 
             <div className="r-field">
               <label htmlFor="phone">Telefono</label>
-              <input id="phone" name="phone" type="tel" autoComplete="tel" />
+              <input id="phone" name="phone" type="tel" maxLength={LEAD_FIELD_LIMITS.phone} autoComplete="tel" />
             </div>
 
             <div className="r-field">
               <label htmlFor="seats">Numero di coperti</label>
-              <input id="seats" name="seats" type="number" min={0} inputMode="numeric" />
+              <input id="seats" name="seats" type="number" min={0} max={MAX_SEATS} step={1} inputMode="numeric" />
             </div>
 
             <div className="r-field r-field-full">
               <label htmlFor="message">Messaggio (facoltativo)</label>
-              <textarea id="message" name="message" rows={4} />
+              <textarea id="message" name="message" rows={4} maxLength={LEAD_FIELD_LIMITS.message} />
             </div>
 
             {status === "error" && <p className="r-form-error">{error}</p>}
@@ -316,6 +323,7 @@ export default function RestaurantPage() {
             <button type="submit" className="r-submit" disabled={status === "sending"}>
               {status === "sending" ? "Invio in corso…" : "Invia richiesta"}
             </button>
+            <PrivacyNote />
           </form>
         )}
       </section>

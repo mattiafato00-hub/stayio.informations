@@ -2,8 +2,13 @@
 
 import { FormEvent, useState } from "react";
 
+import Honeypot from "@/components/Honeypot";
+import PrivacyNote from "@/components/PrivacyNote";
+import { HONEYPOT_FIELD } from "@/lib/antispam";
+import { LEAD_FIELD_LIMITS } from "@/lib/validation";
+
 const HERO_IMAGE =
-  "https://images.unsplash.com/photo-1531973576160-7125cd663d86?auto=format&fit=crop&w=1200&q=80";
+  "/images/other-1200.webp";
 
 const roleOptions = ["Bar", "Beach club", "Esperienze/eventi", "Investitore", "Altro"];
 
@@ -32,6 +37,7 @@ export default function OtherPage() {
       name: data.get("name"),
       email: data.get("email"),
       message: data.get("message"),
+      [HONEYPOT_FIELD]: data.get(HONEYPOT_FIELD),
     };
 
     try {
@@ -101,14 +107,15 @@ export default function OtherPage() {
           </div>
         ) : (
           <form className="r-form" onSubmit={handleSubmit}>
+            <Honeypot />
             <div className="r-field">
               <label htmlFor="name">Nome *</label>
-              <input id="name" name="name" type="text" required autoComplete="name" />
+              <input id="name" name="name" type="text" required maxLength={LEAD_FIELD_LIMITS.name} autoComplete="name" />
             </div>
 
             <div className="r-field">
               <label htmlFor="email">Email *</label>
-              <input id="email" name="email" type="email" required autoComplete="email" />
+              <input id="email" name="email" type="email" required maxLength={LEAD_FIELD_LIMITS.email} autoComplete="email" />
             </div>
 
             <div className="r-field r-field-full">
@@ -127,7 +134,7 @@ export default function OtherPage() {
 
             <div className="r-field r-field-full">
               <label htmlFor="message">Messaggio (facoltativo)</label>
-              <textarea id="message" name="message" rows={4} />
+              <textarea id="message" name="message" rows={4} maxLength={LEAD_FIELD_LIMITS.message} />
             </div>
 
             {status === "error" && <p className="r-form-error">{error}</p>}
@@ -135,6 +142,7 @@ export default function OtherPage() {
             <button type="submit" className="r-submit" disabled={status === "sending"}>
               {status === "sending" ? "Invio in corso…" : "Invia messaggio"}
             </button>
+            <PrivacyNote />
           </form>
         )}
       </section>

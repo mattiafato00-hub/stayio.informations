@@ -3,6 +3,7 @@ import { Inter, Manrope } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { pageMetadata, SITE_URL } from "@/lib/site";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -15,33 +16,19 @@ const manrope = Manrope({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://stayioinformations.com"),
-  title: "Stayio — Nuovi clienti per il tuo ristorante, proprio quando sono pronti a scegliere",
-  description:
-    "Stayio collega B&B, ristoranti e attività locali: più clienti per te, un servizio in più per chi ospita.",
-  openGraph: {
-    title: "Stayio — Nuovi clienti per il tuo ristorante, proprio quando sono pronti a scegliere",
+  metadataBase: new URL(SITE_URL),
+  ...pageMetadata({
+    title: "Stayio — Nuovi clienti per ristoranti e attività locali, un concierge digitale per chi ospita",
     description:
       "Stayio collega B&B, ristoranti e attività locali: più clienti per te, un servizio in più per chi ospita.",
-    images: ["/og-image.png"],
-    url: "https://stayioinformations.com",
-    siteName: "Stayio",
-    locale: "it_IT",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Stayio — Nuovi clienti per il tuo ristorante, proprio quando sono pronti a scegliere",
-    description:
-      "Stayio collega B&B, ristoranti e attività locali: più clienti per te, un servizio in più per chi ospita.",
-    images: ["/og-image.png"],
-  },
+    path: "/",
+  }),
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
-      lang="en"
+      lang="it"
       className={`${inter.variable} ${manrope.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">

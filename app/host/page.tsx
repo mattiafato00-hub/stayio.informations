@@ -2,8 +2,13 @@
 
 import { FormEvent, useEffect, useRef, useState } from "react";
 
+import Honeypot from "@/components/Honeypot";
+import PrivacyNote from "@/components/PrivacyNote";
+import { HONEYPOT_FIELD } from "@/lib/antispam";
+import { LEAD_FIELD_LIMITS } from "@/lib/validation";
+
 const HERO_IMAGE =
-  "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1200&q=80";
+  "/images/host-1200.webp";
 
 const benefits = [
   {
@@ -204,6 +209,7 @@ export default function HostPage() {
       // un solo campo di contatto: lo salviamo sia come telefono che come WhatsApp
       host_phone: phone,
       host_whatsapp: phone,
+      [HONEYPOT_FIELD]: data.get(HONEYPOT_FIELD),
     };
 
     try {
@@ -280,17 +286,18 @@ export default function HostPage() {
           <>
             <p className="h-form-note">Bastano 30 secondi — potrai aggiungere tutti i dettagli quando vuoi.</p>
             <form className="r-form" onSubmit={handleSubmit}>
+              <Honeypot />
               <div className="r-field r-field-full">
                 <label htmlFor="name">Nome dell&apos;alloggio *</label>
-                <input id="name" name="name" type="text" required autoComplete="organization" />
+                <input id="name" name="name" type="text" required maxLength={LEAD_FIELD_LIMITS.name} autoComplete="organization" />
               </div>
               <div className="r-field">
                 <label htmlFor="email">Email *</label>
-                <input id="email" name="email" type="email" required autoComplete="email" />
+                <input id="email" name="email" type="email" required maxLength={LEAD_FIELD_LIMITS.email} autoComplete="email" />
               </div>
               <div className="r-field">
                 <label htmlFor="phone">Telefono / WhatsApp *</label>
-                <input id="phone" name="phone" type="tel" required autoComplete="tel" />
+                <input id="phone" name="phone" type="tel" required maxLength={LEAD_FIELD_LIMITS.phone} autoComplete="tel" />
               </div>
 
               {status === "error" && <p className="r-form-error">{error}</p>}
@@ -298,6 +305,7 @@ export default function HostPage() {
               <button type="submit" className="r-submit" disabled={status === "sending"}>
                 {status === "sending" ? "Attivazione in corso…" : "Attiva il concierge gratuito"}
               </button>
+              <PrivacyNote />
             </form>
           </>
         )}

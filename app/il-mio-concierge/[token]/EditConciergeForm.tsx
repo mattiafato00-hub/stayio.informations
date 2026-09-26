@@ -2,7 +2,9 @@
 
 import { FormEvent, ReactNode, useId, useState } from "react";
 
+import PrivacyNote from "@/components/PrivacyNote";
 import { MAX_RECOMMENDED_RESTAURANTS } from "@/lib/recommended-restaurants";
+import { FAQ_LIMITS, PROPERTY_FIELD_LIMITS as LIMITS } from "@/lib/validation";
 
 export type ConciergeProperty = {
   id: string;
@@ -239,7 +241,7 @@ export default function EditConciergeForm({
   const [error, setError] = useState("");
 
   function addFaq() {
-    setFaqs((rows) => [...rows, { question: "", answer: "" }]);
+    setFaqs((rows) => (rows.length >= FAQ_LIMITS.maxItems ? rows : [...rows, { question: "", answer: "" }]));
   }
 
   function removeFaq(index: number) {
@@ -313,7 +315,7 @@ export default function EditConciergeForm({
         <div className="h-grid">
           <div className="r-field r-field-full">
             <label htmlFor="name">Nome dell&apos;alloggio *</label>
-            <input id="name" name="name" type="text" required defaultValue={property.name ?? ""} autoComplete="organization" />
+            <input id="name" name="name" maxLength={LIMITS.name} type="text" required defaultValue={property.name ?? ""} autoComplete="organization" />
           </div>
         </div>
       </fieldset>
@@ -322,11 +324,11 @@ export default function EditConciergeForm({
         <div className="h-grid">
           <div className="r-field">
             <label htmlFor="wifi_ssid">Nome rete (SSID)</label>
-            <input id="wifi_ssid" name="wifi_ssid" type="text" defaultValue={property.wifi_ssid ?? ""} />
+            <input id="wifi_ssid" name="wifi_ssid" maxLength={LIMITS.wifi_ssid} type="text" defaultValue={property.wifi_ssid ?? ""} />
           </div>
           <div className="r-field">
             <label htmlFor="wifi_password">Password</label>
-            <input id="wifi_password" name="wifi_password" type="text" defaultValue={property.wifi_password ?? ""} />
+            <input id="wifi_password" name="wifi_password" maxLength={LIMITS.wifi_password} type="text" defaultValue={property.wifi_password ?? ""} />
           </div>
         </div>
       </AccordionSection>
@@ -343,15 +345,15 @@ export default function EditConciergeForm({
         <div className="h-grid">
           <div className="r-field">
             <label htmlFor="checkin_info">Come fare il check-in</label>
-            <textarea id="checkin_info" name="checkin_info" rows={2} defaultValue={property.checkin_info ?? ""} placeholder="Es. citofona a 'Rossi', 2º piano. Le chiavi sono nella cassetta accanto al portone, codice 4471." />
+            <textarea id="checkin_info" name="checkin_info" maxLength={LIMITS.checkin_info} rows={2} defaultValue={property.checkin_info ?? ""} placeholder="Es. citofona a 'Rossi', 2º piano. Le chiavi sono nella cassetta accanto al portone, codice 4471." />
           </div>
           <div className="r-field">
             <label htmlFor="checkout_info">Cosa fare prima di uscire</label>
-            <textarea id="checkout_info" name="checkout_info" rows={2} defaultValue={property.checkout_info ?? ""} placeholder="Es. lascia le chiavi sul tavolo, spegni il climatizzatore, chiudi bene la porta-finestra." />
+            <textarea id="checkout_info" name="checkout_info" maxLength={LIMITS.checkout_info} rows={2} defaultValue={property.checkout_info ?? ""} placeholder="Es. lascia le chiavi sul tavolo, spegni il climatizzatore, chiudi bene la porta-finestra." />
           </div>
           <div className="r-field r-field-full">
             <label htmlFor="access_instructions">Come si accede</label>
-            <textarea id="access_instructions" name="access_instructions" rows={2} defaultValue={property.access_instructions ?? ""} placeholder="Portone, scale, ascensore, codice della cassetta..." />
+            <textarea id="access_instructions" name="access_instructions" maxLength={LIMITS.access_instructions} rows={2} defaultValue={property.access_instructions ?? ""} placeholder="Portone, scale, ascensore, codice della cassetta..." />
           </div>
         </div>
       </AccordionSection>
@@ -372,19 +374,19 @@ export default function EditConciergeForm({
         <div className="h-grid">
           <div className="r-field r-field-full">
             <label htmlFor="house_rules">Particolarità e regole della casa</label>
-            <textarea id="house_rules" name="house_rules" rows={2} defaultValue={property.house_rules ?? ""} placeholder="Es. la porta-finestra va sempre chiusa a chiave, niente lavatrice dopo le 22 per i vicini, il balcone del 3º piano non si usa." />
+            <textarea id="house_rules" name="house_rules" maxLength={LIMITS.house_rules} rows={2} defaultValue={property.house_rules ?? ""} placeholder="Es. la porta-finestra va sempre chiusa a chiave, niente lavatrice dopo le 22 per i vicini, il balcone del 3º piano non si usa." />
           </div>
           <div className="r-field">
             <label htmlFor="luggage_info">Deposito bagagli</label>
-            <textarea id="luggage_info" name="luggage_info" rows={2} defaultValue={property.luggage_info ?? ""} placeholder="Es. puoi lasciare le valigie in ingresso prima del check-in o dopo il check-out, avvisami e ti apro." />
+            <textarea id="luggage_info" name="luggage_info" maxLength={LIMITS.luggage_info} rows={2} defaultValue={property.luggage_info ?? ""} placeholder="Es. puoi lasciare le valigie in ingresso prima del check-in o dopo il check-out, avvisami e ti apro." />
           </div>
           <div className="r-field">
             <label htmlFor="appliances_info">Elettrodomestici</label>
-            <textarea id="appliances_info" name="appliances_info" rows={2} defaultValue={property.appliances_info ?? ""} placeholder="Solo quelli con qualche particolarità: es. la lavatrice parte solo col rubinetto aperto sotto il lavello." />
+            <textarea id="appliances_info" name="appliances_info" maxLength={LIMITS.appliances_info} rows={2} defaultValue={property.appliances_info ?? ""} placeholder="Solo quelli con qualche particolarità: es. la lavatrice parte solo col rubinetto aperto sotto il lavello." />
           </div>
           <div className="r-field">
             <label htmlFor="climate_info">Riscaldamento / aria condizionata</label>
-            <textarea id="climate_info" name="climate_info" rows={2} defaultValue={property.climate_info ?? ""} placeholder="Es. telecomando nel primo cassetto, tasto in alto per accendere; il termostato in corridoio si gira in senso orario." />
+            <textarea id="climate_info" name="climate_info" maxLength={LIMITS.climate_info} rows={2} defaultValue={property.climate_info ?? ""} placeholder="Es. telecomando nel primo cassetto, tasto in alto per accendere; il termostato in corridoio si gira in senso orario." />
           </div>
         </div>
       </AccordionSection>
@@ -394,7 +396,7 @@ export default function EditConciergeForm({
         <div className="h-grid">
           <div className="r-field r-field-full">
             <label htmlFor="parking_info">Dove parcheggiare l&apos;auto</label>
-            <textarea id="parking_info" name="parking_info" rows={2} defaultValue={property.parking_info ?? ""} placeholder="Es. strisce blu gratuite dopo le 20 e la domenica; il posto sotto casa in Via Roma 4 è quasi sempre libero; il garage in cortile ha il telecomando appeso all&apos;ingresso." />
+            <textarea id="parking_info" name="parking_info" maxLength={LIMITS.parking_info} rows={2} defaultValue={property.parking_info ?? ""} placeholder="Es. strisce blu gratuite dopo le 20 e la domenica; il posto sotto casa in Via Roma 4 è quasi sempre libero; il garage in cortile ha il telecomando appeso all&apos;ingresso." />
           </div>
         </div>
       </AccordionSection>
@@ -404,7 +406,7 @@ export default function EditConciergeForm({
         <div className="h-grid">
           <div className="r-field r-field-full">
             <label htmlFor="waste_info">Come e dove si buttano i rifiuti</label>
-            <textarea id="waste_info" name="waste_info" rows={2} defaultValue={property.waste_info ?? ""} placeholder="Es. i bidoni sono in cortile; umido lunedì e giovedì, plastica il mercoledì, sacchetti sotto il lavello; il vetro nella campana all&apos;angolo." />
+            <textarea id="waste_info" name="waste_info" maxLength={LIMITS.waste_info} rows={2} defaultValue={property.waste_info ?? ""} placeholder="Es. i bidoni sono in cortile; umido lunedì e giovedì, plastica il mercoledì, sacchetti sotto il lavello; il vetro nella campana all&apos;angolo." />
           </div>
         </div>
       </AccordionSection>
@@ -426,11 +428,11 @@ export default function EditConciergeForm({
         <div className="h-grid">
           <div className="r-field">
             <label htmlFor="host_phone">Telefono</label>
-            <input id="host_phone" name="host_phone" type="tel" defaultValue={property.host_phone ?? ""} autoComplete="tel" />
+            <input id="host_phone" name="host_phone" maxLength={LIMITS.host_phone} type="tel" defaultValue={property.host_phone ?? ""} autoComplete="tel" />
           </div>
           <div className="r-field">
             <label htmlFor="host_whatsapp">WhatsApp</label>
-            <input id="host_whatsapp" name="host_whatsapp" type="tel" defaultValue={property.host_whatsapp ?? ""} />
+            <input id="host_whatsapp" name="host_whatsapp" maxLength={LIMITS.host_whatsapp} type="tel" defaultValue={property.host_whatsapp ?? ""} />
           </div>
         </div>
       </AccordionSection>
@@ -439,14 +441,14 @@ export default function EditConciergeForm({
         <div className="h-grid">
           <div className="r-field r-field-full">
             <label htmlFor="custom_instructions">Qualsiasi altra cosa utile ai tuoi ospiti</label>
-            <textarea id="custom_instructions" name="custom_instructions" rows={3} defaultValue={property.custom_instructions ?? ""} />
+            <textarea id="custom_instructions" name="custom_instructions" maxLength={LIMITS.custom_instructions} rows={3} defaultValue={property.custom_instructions ?? ""} />
           </div>
         </div>
       </AccordionSection>
 
       <fieldset className="h-fieldset">
         <legend className="h-legend">{iconFaq} Domande frequenti</legend>
-        <p className="h-hint">Le domande che ti fanno più spesso, con la risposta pronta. Aggiungine quante vuoi.</p>
+        <p className="h-hint">Le domande che ti fanno più spesso, con la risposta pronta. Fino a {FAQ_LIMITS.maxItems}.</p>
         {faqs.map((faq, index) => (
           <div className="h-faq-row" key={index}>
             <div className="h-faq-top">
@@ -461,6 +463,7 @@ export default function EditConciergeForm({
                 id={`faq-q-${index}`}
                 type="text"
                 value={faq.question}
+                maxLength={FAQ_LIMITS.question}
                 onChange={(e) => updateFaq(index, "question", e.target.value)}
                 placeholder="Es. C'è il phon in bagno?"
               />
@@ -471,13 +474,14 @@ export default function EditConciergeForm({
                 id={`faq-a-${index}`}
                 rows={2}
                 value={faq.answer}
+                maxLength={FAQ_LIMITS.answer}
                 onChange={(e) => updateFaq(index, "answer", e.target.value)}
                 placeholder="Es. Sì, nel primo cassetto sotto il lavandino."
               />
             </div>
           </div>
         ))}
-        <button type="button" className="h-faq-add" onClick={addFaq}>
+        <button type="button" className="h-faq-add" onClick={addFaq} disabled={faqs.length >= FAQ_LIMITS.maxItems}>
           + Aggiungi domanda
         </button>
       </fieldset>
@@ -487,6 +491,7 @@ export default function EditConciergeForm({
       <button type="submit" className="r-submit" disabled={status === "saving"}>
         {status === "saving" ? "Salvataggio…" : "Salva le informazioni"}
       </button>
+      <PrivacyNote />
 
       {status === "saved" && <p className="h-edit-saved" role="status">Salvato ✓</p>}
     </form>
