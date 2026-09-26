@@ -1,12 +1,8 @@
 import nodemailer from "nodemailer";
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
 
 const recipient = "stayio267@gmail.com";
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-const supabase = createClient(supabaseUrl, serviceRoleKey);
 
 export async function POST(request: Request) {
   try {
@@ -40,6 +36,7 @@ export async function POST(request: Request) {
     // configurati (vedi il controllo subito sotto) o se l'invio fallisce.
     // Best-effort: un errore qui non deve impedire l'invio dell'email
     // (che resta il canale principale, invariato) né la risposta al form.
+    const supabase = getSupabaseAdmin();
     const { error: leadError } = await supabase.from("leads").insert({
       name,
       email,
@@ -76,7 +73,8 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json({ success: true });
-  } catch {
+  } catch (err) {
+    console.error("[contact] Errore:", err);
     return NextResponse.json({ error: "We could not send your message. Please try again." }, { status: 500 });
   }
 }
